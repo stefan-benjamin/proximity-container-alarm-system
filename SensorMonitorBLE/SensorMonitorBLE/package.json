@@ -1,0 +1,9 @@
+{
+  "name": "sensor-monitor-ble",
+  "version": "0.0.0",
+  "description": "SensorMonitorBLE",
+  "main": "app.js",
+  "author": {
+    "name": "stefa"
+  }
+}

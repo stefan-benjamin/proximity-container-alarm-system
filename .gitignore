@@ -54,5 +54,6 @@ freeline.py
 freeline/
 freeline_project_description.json
 
-AndroidProximityMonitor/.idea/misc.xml
-AndroidProximityMonitor/.idea/modules.xml
+/AndroidProximityMonitor/.idea/misc.xml
+/AndroidProximityMonitor/.idea/modules.xml
+/SensorMonitorBLE/.vs/SensorMonitorBLE/v15
