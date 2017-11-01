@@ -57,3 +57,4 @@ freeline_project_description.json
 /AndroidProximityMonitor/.idea/misc.xml
 /AndroidProximityMonitor/.idea/modules.xml
 /SensorMonitorBLE/.vs/SensorMonitorBLE/v15
+/SensorMonitorBLE/SensorMonitorBLE/node_modules

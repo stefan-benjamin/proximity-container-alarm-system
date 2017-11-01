@@ -5,5 +5,8 @@
   "main": "app.js",
   "author": {
     "name": "stefa"
+  },
+  "dependencies": {
+    "bleno": "^0.4.2"
   }
 }
