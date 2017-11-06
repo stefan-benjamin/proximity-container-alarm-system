@@ -29,10 +29,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
-    <Compile Include="systemInformationService.js">
+    <Compile Include="bleAdvertiser.js">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="upTimeCharacteristic.js">
+    <Compile Include="globals.js">
       <SubType>Code</SubType>
     </Compile>
     <Content Include="package.json" />
