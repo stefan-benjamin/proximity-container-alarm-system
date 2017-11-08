@@ -18,8 +18,6 @@ bleno.on('stateChange', function (state) {
       if (startAdvertisingRequested === true) {
          _startAdvertisingInternal();
       }
-
-      setInterval(_startAdvertisingInternal, 3000);
    }
 });
 
