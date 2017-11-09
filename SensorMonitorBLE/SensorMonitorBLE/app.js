@@ -4,6 +4,8 @@ console.log('Hello world');
 
 var bleAdvertiser = require('./bleAdvertiser');
 var globals = require('./globals');
+var sensorInterface = require('./sensorInterface');
+
 
 bleAdvertiser.advertiseCode(globals.okStatusCode);
 
