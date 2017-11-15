@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "bleno": "^0.4.2",
-    "node-dht-sensor": "0.0.32"
+    "node-dht-sensor": "0.0.32",
+    "node-rest-client": "^3.1.0"
   }
 }

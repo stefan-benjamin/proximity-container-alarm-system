@@ -3,6 +3,7 @@
 var bleAdvertiser = require('./bleAdvertiser');
 var globals = require('./globals');
 var sensorInterface = require('./sensorInterface');
+var restClient = require('./restClient');
 
 _refreshStatus(); //first call
 setInterval(_refreshStatus, globals.statusRefreshInterval); //repetitive call

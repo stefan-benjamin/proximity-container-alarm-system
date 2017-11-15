@@ -35,6 +35,9 @@
     <Compile Include="globals.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="restClient.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="sensorInterface.js">
       <SubType>Code</SubType>
     </Compile>
