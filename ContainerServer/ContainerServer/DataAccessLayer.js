@@ -23,6 +23,18 @@ var Alarm = sequelize.define('ALARM',{
     timestamps: false
 });
 
+var AlarmEvent = sequelize.define('ALARMEVENT', {
+    Id:{type: Sequelize.INTEGER, primaryKey:true, autoincrement: true},
+    AlarmId: {type: Sequelize.INTEGER},
+    Timestamp: {type: Sequelize.STRING},
+    DeviceId: {type:Sequelize.INTEGER}},
+{
+    freezeTableName: true,
+    tableName: 'ALARMEVENT',
+    timestamps:false
+
+});
+
 var x = function getAlarms(alarm){
     console.log(alarm)
 }
@@ -37,7 +49,19 @@ function GetAlarmById(Id, getById){
     Alarm.findById(Id).then(alarm =>{
         getById(alarm)
     })
-}
+};
+
+function GetAllAlarmEvents(getAlarmEvents) {
+    AlarmEvent.findAll().then(alarmEvent => {
+        getAlarmEvents(alarmEvent)
+    })
+};
+
+function GetAlarmEventById(id, alarmEventById) {
+    AlarmEvent.findById(Id).then(alarmEvent => {
+        alarmEventById(alarmEvent)
+    })
+};
 
 GetAllAlarms(x);
 
