@@ -22,6 +22,25 @@ var Alarm = sequelize.define('ALARM',{
     tableName: 'ALARM',
     timestamps: false
 });
+
+var x = function getAlarms(alarm){
+    console.log(alarm)
+}
+
+function GetAllAlarms(getAlarms) {
+    Alarm.findAll().then(alarm => {
+        getAlarms(alarm)
+    })
+};
+
+function GetAlarmById(Id, getById){
+    Alarm.findById(Id).then(alarm =>{
+        getById(alarm)
+    })
+}
+
+GetAllAlarms(x);
+
 //Create data
 //var alarm = Alarm.build({
 //    Name: 'Xtreme',
