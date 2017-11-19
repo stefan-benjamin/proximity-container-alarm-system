@@ -35,6 +35,37 @@ var AlarmEvent = sequelize.define('ALARMEVENT', {
 
 });
 
+var AlarmEventResolution = sequelize.define('ALARMEVENTRESOLUTION', {
+    Id:{type: Sequelize.INTEGER, primaryKey:true, autoincrement: true},
+    AlarmEventId:{type: Sequelize.INTEGER},
+    UserId:{type:Sequelize.INTEGER},
+    Timestamp:{type: Sequelize.STRING}},
+    {
+        freezeTableName: true,
+        tableName: 'ALARMEVENTRESOLUTION',
+        timestamps: false
+});
+
+var Devices = sequelize.define('DEVICES', {
+   Id:{type: Sequelize.INTEGER, primaryKey: true, autoincrement: true},
+   Name: {type: Sequelize.STRING},
+   Location: {type: Sequelize.STRING}},
+    {
+        freezeTableName: true,
+        tableName: 'DEVICES',
+        timestamps: false
+});
+
+var Users = sequelize.define('USERS', {
+    Id:{type: Sequelize.INTEGER, primaryKey: true, autoincrement: true},
+    Name: {type: Sequelize.STRING},
+    Function: {type:Sequelize.STRING}},
+    {
+        freezeTableName: true,
+        tableName: 'USERS',
+        timestamps: false
+});
+
 var x = function getAlarms(alarm){
     console.log(alarm)
 }
@@ -51,6 +82,10 @@ function GetAlarmById(Id, getById){
     })
 };
 
+function SaveAlarm(alarm) {
+    alarm.save().then(() => {})
+};
+
 function GetAllAlarmEvents(getAlarmEvents) {
     AlarmEvent.findAll().then(alarmEvent => {
         getAlarmEvents(alarmEvent)
@@ -62,6 +97,10 @@ function GetAlarmEventById(id, alarmEventById) {
         alarmEventById(alarmEvent)
     })
 };
+
+function SaveAlarmEvent(alarmEvent) {
+    alarmEvent.save().then(() => {})
+}
 
 GetAllAlarms(x);
 
