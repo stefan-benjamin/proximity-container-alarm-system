@@ -68,7 +68,7 @@ var Users = sequelize.define('USERS', {
 
 var x = function getAlarms(alarm){
     console.log(alarm)
-}
+};
 
 function GetAllAlarms(getAlarms) {
     Alarm.findAll().then(alarm => {
@@ -93,14 +93,50 @@ function GetAllAlarmEvents(getAlarmEvents) {
 };
 
 function GetAlarmEventById(id, alarmEventById) {
-    AlarmEvent.findById(Id).then(alarmEvent => {
+    AlarmEvent.findById(id).then(alarmEvent => {
         alarmEventById(alarmEvent)
     })
 };
 
 function SaveAlarmEvent(alarmEvent) {
     alarmEvent.save().then(() => {})
-}
+};
+
+function GetAllAlarmEventResolutions(getAlarmEventResolutions) {
+    AlarmEventResolution.findAll().then(alarmEventResolution => {
+        getAlarmEventResolutions(alarmEventResolution)
+    })
+};
+
+function GetAlarmEventResolutionById(id, alarmEventResolutionById){
+    AlarmEventResolution.findById(id).then(alarmEventResolution => {
+        alarmEventResolutionById(alarmEventResolution)
+    })
+};
+
+function GetAllDevices(getDevices) {
+    Devices.findAll().then(device => {
+        getDevices(device)
+    })
+};
+
+function GetDeviceById(id, deviceById) {
+    Devices.findById(id).then(device => {
+        deviceById(device)
+    })
+};
+
+function GetAllUsers(getUsers) {
+    Users.findAll().then(user => {
+        getUsers(user)
+    })
+};
+
+function GetUserById(id, userById) {
+    Users.findById(id).then(user => {
+        userById(user)
+    })
+};
 
 GetAllAlarms(x);
 
