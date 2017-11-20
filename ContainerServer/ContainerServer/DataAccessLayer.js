@@ -114,6 +114,10 @@ function GetAlarmEventResolutionById(id, alarmEventResolutionById){
     })
 };
 
+function SaveAlarmEventResolution(alarmEventResolution) {
+    alarmEventResolution.save().then(()=>{})
+};
+
 function GetAllDevices(getDevices) {
     Devices.findAll().then(device => {
         getDevices(device)
@@ -126,6 +130,10 @@ function GetDeviceById(id, deviceById) {
     })
 };
 
+function SaveDevice(device) {
+    device.save().then(()=>{})
+};
+
 function GetAllUsers(getUsers) {
     Users.findAll().then(user => {
         getUsers(user)
@@ -136,6 +144,10 @@ function GetUserById(id, userById) {
     Users.findById(id).then(user => {
         userById(user)
     })
+};
+
+function SaveUser(user) {
+    user.save().then(()=>{})
 };
 
 GetAllAlarms(x);
