@@ -11,22 +11,32 @@ setInterval(_refreshStatus, globals.statusRefreshInterval); //repetitive call
 function _refreshStatus()
 {
    var sensorData = sensorInterface.getEnvSensorData();
+   var statusCode;
+
    if (!sensorData) //error in sensor data
    {
-      bleAdvertiser.advertiseCode(globals.sensorErrorStatusCode);
-      return;
+      statusCode = globals.sensorErrorStatusCode;
    }
-   
-   if (sensorData.temperature > 25)
+   else if (sensorData.temperature > 25)
    {
-      bleAdvertiser.advertiseCode(globals.upperThresholdExceededStatusCode);
+      statusCode = globals.upperThresholdExceededStatusCode;
    }
    else if (sensorData.temperature < 23)
    {
-      bleAdvertiser.advertiseCode(globals.lowerThresholdExceededStatusCode);
+      statusCode = globals.lowerThresholdExceededStatusCode;
    }
    else
    {
-      bleAdvertiser.advertiseCode(globals.okStatusCode);
+      statusCode = globals.okStatusCode;
    }
+
+   bleAdvertiser.advertiseCode(statusCode);
+
+   //report sensor status to the server
+   restClient.reportStatus(globals.serverIpAddress, globals.serverPortNumber, sensorData, statusCode, function (callbackData) {
+      console.log("Successfully reported sensor status to " + callbackData.requestedIpAddress + ":" + callbackData.requestedPort);
+
+   }, function (errorCallbackData) {
+      console.log("Error while reporting sensor status to " + errorCallbackData.requestedIpAddress + ":" + errorCallbackData.requestedPort);
+   })
 }
