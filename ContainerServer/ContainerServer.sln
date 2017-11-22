@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2006
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "ContainerServer", "ContainerServer\ContainerServer.njsproj", "{DA00EF76-5261-4059-B3F2-01FFC6E533E5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DA00EF76-5261-4059-B3F2-01FFC6E533E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA00EF76-5261-4059-B3F2-01FFC6E533E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA00EF76-5261-4059-B3F2-01FFC6E533E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA00EF76-5261-4059-B3F2-01FFC6E533E5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E91FA9DC-56F5-4C8A-ACA0-0659152B7CA7}
+	EndGlobalSection
+EndGlobal

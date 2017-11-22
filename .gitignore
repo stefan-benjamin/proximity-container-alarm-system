@@ -60,3 +60,5 @@ freeline_project_description.json
 /SensorMonitorBLE/SensorMonitorBLE/node_modules
 /ContainerServer/ContainerServer/node_modules
 /SensorMonitorBLE/.vs/config
+/ContainerServer/.vs/ContainerServer/v15
+/ContainerServer/ContainerServer/obj/Debug
