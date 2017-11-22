@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private Button button;
     private ProgressBar progressBar;
+    private RESTClient restClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,14 +81,16 @@ public class MainActivity extends AppCompatActivity {
         listView = findViewById(R.id.listViewBleDevices);
 
         bleDevices = new ArrayList<>();
-        bleDevices.add(new BleDevice("test Name", "00:11:22:33:44:55", "-99"));
+        bleDevices.add(new BleDevice("test Name", "00:11:22:33:44:55", "-69"));
         adapter = new BleDevicesAdapter(this, bleDevices);
 
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), "MAC: " + bleDevices.get(position).MAC, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "MAC: " + bleDevices.get(position).MAC, Toast.LENGTH_SHORT).show();
+                restClient = new RESTClient(getApplicationContext(),0);
+                restClient.execute();
             }
         });
 
