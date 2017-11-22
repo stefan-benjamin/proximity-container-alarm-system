@@ -35,11 +35,30 @@ var AlarmEvent = sequelize.define('ALARMEVENT', {
 
 });
 
+var Users = sequelize.define('USERS', {
+        Id:{type: Sequelize.INTEGER, primaryKey: true, autoincrement: true},
+        Name: {type: Sequelize.STRING},
+        Function: {type:Sequelize.STRING}},
+    {
+        freezeTableName: true,
+        tableName: 'USERS',
+        timestamps: false
+    });
+
 var AlarmEventResolution = sequelize.define('ALARMEVENTRESOLUTION', {
     Id:{type: Sequelize.INTEGER, primaryKey:true, autoincrement: true},
-    AlarmEventId:{type: Sequelize.INTEGER},
-    UserId:{type:Sequelize.INTEGER},
+    AlarmEventId:{type: Sequelize.INTEGER,
+    references:{
+        model: AlarmEvent,
+        key: AlarmEvent.Id
+    }},
+    UserId:{type:Sequelize.INTEGER,
+    references:{
+        model: Users,
+        key: Users.Id
+    }},
     Timestamp:{type: Sequelize.STRING}},
+
     {
         freezeTableName: true,
         tableName: 'ALARMEVENTRESOLUTION',
@@ -56,18 +75,16 @@ var Devices = sequelize.define('DEVICES', {
         timestamps: false
 });
 
-var Users = sequelize.define('USERS', {
-    Id:{type: Sequelize.INTEGER, primaryKey: true, autoincrement: true},
-    Name: {type: Sequelize.STRING},
-    Function: {type:Sequelize.STRING}},
-    {
-        freezeTableName: true,
-        tableName: 'USERS',
-        timestamps: false
-});
+
+AlarmEvent.belongsToMany(Users, {through: AlarmEventResolution, foreignKey: AlarmEventResolution.AlarmEventId});
+Users.belongsToMany(AlarmEvent, {through: AlarmEventResolution, foreignKey: AlarmEventResolution.UserId});
 
 var x = function getAlarms(alarm){
     console.log(alarm)
+};
+
+var y = function alarmResolutions(alarmResolutions) {
+    console.log(alarmResolutions)
 };
 
 function GetAllAlarms(getAlarms) {
@@ -150,8 +167,50 @@ function SaveUser(user) {
     user.save().then(()=>{})
 };
 
-GetAllAlarms(x);
+function GetAlarmResolutionsByUserId(id, alarmEventByUser) {
+    AlarmEvent.findAll({
+            include:[{
+                model: Users,
+                where: {Id: id}
+            }]
+    }).then(alarmEvent => {
+        alarmEventByUser(alarmEvent)
+    })
+};
 
+
+GetAllAlarms(x);
+GetAlarmResolutionsByUserId(1, y);
+
+
+
+
+//var date = new Date();
+//var timestamp = date.getDate();
+
+//var alarmEvent = AlarmEvent.build({
+//    AlarmId:1223,
+//    Timestamp: timestamp,
+//    DeviceId: 11
+//});
+
+//SaveAlarmEvent(alarmEvent);
+
+//var alarmEventResolution = AlarmEventResolution.build({
+//    AlarmEventId:1,
+//    UserId:1,
+//    Timestamp: timestamp
+//})
+
+//alarmEventResolution.save(() => {})
+
+
+//var user = Users.build({
+//    Name: 'Tomas',
+//    Function : 'Developer'
+//})
+
+//user.save().then(() => {})
 //Create data
 //var alarm = Alarm.build({
 //    Name: 'Xtreme',
