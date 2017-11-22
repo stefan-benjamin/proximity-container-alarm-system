@@ -6,6 +6,7 @@
    sensorErrorStatusCode: "3001",
    internalSensorDataRefreshInterval: 3000,
    statusRefreshInterval: 5000,
+   maximumRestReportInterval: 60000,
    serverIpAddress: "192.168.43.250",
    serverPortNumber: 8080
 }

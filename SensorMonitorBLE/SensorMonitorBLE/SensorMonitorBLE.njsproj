@@ -41,6 +41,9 @@
     <Compile Include="sensorInterface.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="utils.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="RunNode.sh">
