@@ -6,39 +6,37 @@ var sequelize = new Sequelize('containerSystemDB', null, null, {
     storage: './../../DBScripts/containerSystem.db'
 });
 
-sequelize.authenticate().then(function (err) {
-    console.log('Connection successful');
-}, function (err) {
-    console.log('Connection unsuccessful', err)
-});
-
-var Alarm = sequelize.define('ALARM',{
-   Id: {type: Sequelize.INTEGER, primaryKey: true, autoincrement: true },
-   Name: {type: Sequelize.STRING},
-   Description: {type: Sequelize.STRING},
-   Resolution: {type: Sequelize.STRING}},
-{
-    freezeTableName: true,
-    tableName: 'ALARM',
-    timestamps: false
-});
-
+   // module.exports = function(sequelize, DataTypes) {
+var Alarm = sequelize.define('ALARM', {
+                Id: {type: Sequelize.INTEGER, primaryKey: true, autoincrement: true},
+                Name: {type: Sequelize.STRING},
+                Description: {type: Sequelize.STRING},
+                Resolution: {type: Sequelize.STRING}
+            },
+            {
+                freezeTableName: true,
+                tableName: 'ALARM',
+                timestamps: false
+            });
+    //}
 var AlarmEvent = sequelize.define('ALARMEVENT', {
-    Id:{type: Sequelize.INTEGER, primaryKey:true, autoincrement: true},
-    AlarmId: {type: Sequelize.INTEGER},
-    Timestamp: {type: Sequelize.STRING},
-    DeviceId: {type:Sequelize.INTEGER}},
-{
-    freezeTableName: true,
-    tableName: 'ALARMEVENT',
-    timestamps:false
+        Id: {type: Sequelize.INTEGER, primaryKey: true, autoincrement: true},
+        AlarmId: {type: Sequelize.INTEGER},
+        Timestamp: {type: Sequelize.STRING},
+        DeviceId: {type: Sequelize.INTEGER}
+    },
+    {
+        freezeTableName: true,
+        tableName: 'ALARMEVENT',
+        timestamps: false
 
-});
+    });
 
 var Users = sequelize.define('USERS', {
-        Id:{type: Sequelize.INTEGER, primaryKey: true, autoincrement: true},
+        Id: {type: Sequelize.INTEGER, primaryKey: true, autoincrement: true},
         Name: {type: Sequelize.STRING},
-        Function: {type:Sequelize.STRING}},
+        Function: {type: Sequelize.STRING}
+    },
     {
         freezeTableName: true,
         tableName: 'USERS',
@@ -46,40 +44,46 @@ var Users = sequelize.define('USERS', {
     });
 
 var AlarmEventResolution = sequelize.define('ALARMEVENTRESOLUTION', {
-    Id:{type: Sequelize.INTEGER, primaryKey:true, autoincrement: true},
-    AlarmEventId:{type: Sequelize.INTEGER,
-    references:{
-        model: AlarmEvent,
-        key: AlarmEvent.Id
-    }},
-    UserId:{type:Sequelize.INTEGER,
-    references:{
-        model: Users,
-        key: Users.Id
-    }},
-    Timestamp:{type: Sequelize.STRING}},
+        Id: {type: Sequelize.INTEGER, primaryKey: true, autoincrement: true},
+        AlarmEventId: {
+            type: Sequelize.INTEGER,
+            references: {
+                model: AlarmEvent,
+                key: AlarmEvent.Id
+            }
+        },
+        UserId: {
+            type: Sequelize.INTEGER,
+            references: {
+                model: Users,
+                key: Users.Id
+            }
+        },
+        Timestamp: {type: Sequelize.STRING}
+    },
 
     {
         freezeTableName: true,
         tableName: 'ALARMEVENTRESOLUTION',
         timestamps: false
-});
+    });
 
 var Devices = sequelize.define('DEVICES', {
-   Id:{type: Sequelize.INTEGER, primaryKey: true, autoincrement: true},
-   Name: {type: Sequelize.STRING},
-   Location: {type: Sequelize.STRING}},
+        Id: {type: Sequelize.INTEGER, primaryKey: true, autoincrement: true},
+        Name: {type: Sequelize.STRING},
+        Location: {type: Sequelize.STRING}
+    },
     {
         freezeTableName: true,
         tableName: 'DEVICES',
         timestamps: false
-});
+    });
 
 
 AlarmEvent.belongsToMany(Users, {through: AlarmEventResolution, foreignKey: AlarmEventResolution.AlarmEventId});
 Users.belongsToMany(AlarmEvent, {through: AlarmEventResolution, foreignKey: AlarmEventResolution.UserId});
 
-var x = function getAlarms(alarm){
+var x = function getAlarms(alarm) {
     console.log(alarm)
 };
 
@@ -93,14 +97,15 @@ function GetAllAlarms(getAlarms) {
     })
 };
 
-function GetAlarmById(Id, getById){
-    Alarm.findById(Id).then(alarm =>{
+function GetAlarmById(Id, getById) {
+    Alarm.findById(Id).then(alarm => {
         getById(alarm)
     })
 };
 
 function SaveAlarm(alarm) {
-    alarm.save().then(() => {})
+    alarm.save().then(() => {
+    })
 };
 
 function GetAllAlarmEvents(getAlarmEvents) {
@@ -116,7 +121,8 @@ function GetAlarmEventById(id, alarmEventById) {
 };
 
 function SaveAlarmEvent(alarmEvent) {
-    alarmEvent.save().then(() => {})
+    alarmEvent.save().then(() => {
+    })
 };
 
 function GetAllAlarmEventResolutions(getAlarmEventResolutions) {
@@ -125,14 +131,15 @@ function GetAllAlarmEventResolutions(getAlarmEventResolutions) {
     })
 };
 
-function GetAlarmEventResolutionById(id, alarmEventResolutionById){
+function GetAlarmEventResolutionById(id, alarmEventResolutionById) {
     AlarmEventResolution.findById(id).then(alarmEventResolution => {
         alarmEventResolutionById(alarmEventResolution)
     })
 };
 
 function SaveAlarmEventResolution(alarmEventResolution) {
-    alarmEventResolution.save().then(()=>{})
+    alarmEventResolution.save().then(() => {
+    })
 };
 
 function GetAllDevices(getDevices) {
@@ -148,7 +155,8 @@ function GetDeviceById(id, deviceById) {
 };
 
 function SaveDevice(device) {
-    device.save().then(()=>{})
+    device.save().then(() => {
+    })
 };
 
 function GetAllUsers(getUsers) {
@@ -164,15 +172,16 @@ function GetUserById(id, userById) {
 };
 
 function SaveUser(user) {
-    user.save().then(()=>{})
+    user.save().then(() => {
+    })
 };
 
 function GetAlarmResolutionsByUserId(id, alarmEventByUser) {
     AlarmEvent.findAll({
-            include:[{
-                model: Users,
-                where: {Id: id}
-            }]
+        include: [{
+            model: Users,
+            where: {Id: id}
+        }]
     }).then(alarmEvent => {
         alarmEventByUser(alarmEvent)
     })

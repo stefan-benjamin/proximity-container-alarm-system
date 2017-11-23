@@ -9,6 +9,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 
 var globals = require('./globals');
+var dblayer = require('./DataAccessLayer')
 
 var app = express();
 
@@ -38,6 +39,25 @@ app.put('/api/sensorStatus', function (req, res) {
    console.log("Received sensor status from: " + sensorId + " with sensor data: " + JSON.stringify (sensorData) + ", status code: " + statusCode);
    
    res.send();
+});
+
+app.get('/api/alarmResolution', function(req, res){
+   res.send('test')
+});
+
+app.put('/api/resolveAlarm', function (req, res) {
+   var alarmId = req.body.alarmId;
+   var technicianId = req.body.technicianId;
+   var alarmEventTimestamp = req.body.alarmEventTimestamp;
+
+   res.send();
+});
+
+app.put('/api/alarmEvent', function (req, res) {
+   var alarmId = req.body.alarmId;
+   var sensorId = req.body.sensorId;
+   var timestamp = req.body.deviceTimestamp;
+
 });
 
 module.exports = app;
