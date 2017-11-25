@@ -1,13 +1,18 @@
 'use strict';
-
-var Sequelize = require('sequelize');
-var sequelize = new Sequelize('containerSystemDB', null, null, {
-    dialect: "sqlite",
-    storage: './../../DBScripts/containerSystem.db'
-});
+var models = require('./models');
+var Alarm = models.Alarm;
+var AlarmEvent = models.AlarmEvent;
+var AlarmEventResolution = models.AlarmEventResolution;
+var Users = models.Users;
+var Devices = models.Devices;
+//var Sequelize = require('sequelize');
+//var sequelize = new Sequelize('containerSystemDB', null, null, {
+//    dialect: "sqlite",
+//    storage: './../../DBScripts/containerSystem.db'
+//});
 
    // module.exports = function(sequelize, DataTypes) {
-var Alarm = sequelize.define('ALARM', {
+/*var Alarm = sequelize.define('ALARM', {
                 Id: {type: Sequelize.INTEGER, primaryKey: true, autoincrement: true},
                 Name: {type: Sequelize.STRING},
                 Description: {type: Sequelize.STRING},
@@ -47,17 +52,17 @@ var AlarmEventResolution = sequelize.define('ALARMEVENTRESOLUTION', {
         Id: {type: Sequelize.INTEGER, primaryKey: true, autoincrement: true},
         AlarmEventId: {
             type: Sequelize.INTEGER,
-            references: {
-                model: AlarmEvent,
-                key: AlarmEvent.Id
-            }
+            //references: {
+            //    model: AlarmEvent,
+            //    key: AlarmEvent.Id
+           // }
         },
         UserId: {
             type: Sequelize.INTEGER,
-            references: {
-                model: Users,
-                key: Users.Id
-            }
+            //references: {
+            //    model: Users,
+            //    key: Users.Id
+           // }
         },
         Timestamp: {type: Sequelize.STRING}
     },
@@ -81,102 +86,102 @@ var Devices = sequelize.define('DEVICES', {
 
 
 AlarmEvent.belongsToMany(Users, {through: AlarmEventResolution, foreignKey: AlarmEventResolution.AlarmEventId});
-Users.belongsToMany(AlarmEvent, {through: AlarmEventResolution, foreignKey: AlarmEventResolution.UserId});
+Users.belongsToMany(AlarmEvent, {through: AlarmEventResolution, foreignKey: AlarmEventResolution.UserId});*/
 
-var x = function getAlarms(alarm) {
+/*var x = function getAlarms(alarm) {
     console.log(alarm)
 };
 
 var y = function alarmResolutions(alarmResolutions) {
     console.log(alarmResolutions)
-};
-
-function GetAllAlarms(getAlarms) {
+};*/
+module.exports = {
+ getAllAlarms:   function GetAllAlarms(getAlarms)
+{
     Alarm.findAll().then(alarm => {
         getAlarms(alarm)
     })
-};
+},
 
-function GetAlarmById(Id, getById) {
+ getAlarmById: function GetAlarmById(Id, getById) {
     Alarm.findById(Id).then(alarm => {
         getById(alarm)
     })
-};
-
-function SaveAlarm(alarm) {
+},
+    saveAlarm: function SaveAlarm(alarm) {
     alarm.save().then(() => {
     })
-};
+},
 
-function GetAllAlarmEvents(getAlarmEvents) {
+getAllAlarmEvents: function GetAllAlarmEvents(getAlarmEvents) {
     AlarmEvent.findAll().then(alarmEvent => {
         getAlarmEvents(alarmEvent)
     })
-};
+},
 
-function GetAlarmEventById(id, alarmEventById) {
+getAlarmEventById: function GetAlarmEventById(id, alarmEventById) {
     AlarmEvent.findById(id).then(alarmEvent => {
         alarmEventById(alarmEvent)
     })
-};
+},
 
-function SaveAlarmEvent(alarmEvent) {
+saveAlarmEvent: function SaveAlarmEvent(alarmEvent) {
     alarmEvent.save().then(() => {
     })
-};
+},
 
-function GetAllAlarmEventResolutions(getAlarmEventResolutions) {
+getAllAlarmEventResolutions: function GetAllAlarmEventResolutions(getAlarmEventResolutions) {
     AlarmEventResolution.findAll().then(alarmEventResolution => {
         getAlarmEventResolutions(alarmEventResolution)
     })
-};
+},
 
-function GetAlarmEventResolutionById(id, alarmEventResolutionById) {
+getAllarmEventResolutionById: function GetAlarmEventResolutionById(id, alarmEventResolutionById) {
     AlarmEventResolution.findById(id).then(alarmEventResolution => {
         alarmEventResolutionById(alarmEventResolution)
     })
-};
+},
 
-function SaveAlarmEventResolution(alarmEventResolution) {
+saveAlarmEventResolution: function SaveAlarmEventResolution(alarmEventResolution) {
     alarmEventResolution.save().then(() => {
     })
-};
+},
 
-function GetAllDevices(getDevices) {
+getAllDevices: function GetAllDevices(getDevices) {
     Devices.findAll().then(device => {
         getDevices(device)
     })
-};
+},
 
-function GetDeviceById(id, deviceById) {
+getDeviceById: function GetDeviceById(id, deviceById) {
     Devices.findById(id).then(device => {
         deviceById(device)
     })
-};
+},
 
-function SaveDevice(device) {
+saveDevice: function SaveDevice(device) {
     device.save().then(() => {
     })
-};
+},
 
-function GetAllUsers(getUsers) {
+getAllUsers: function GetAllUsers(getUsers) {
     Users.findAll().then(user => {
         getUsers(user)
     })
-};
+},
 
-function GetUserById(id, userById) {
+getUserById: function GetUserById(id, userById) {
     Users.findById(id).then(user => {
         userById(user)
     })
-};
+},
 
-function SaveUser(user) {
+saveUser: function SaveUser(user) {
     user.save().then(() => {
     })
-};
+},
 
-function GetAlarmResolutionsByUserId(id, alarmEventByUser) {
+getAlarmResolutionsByUserId: function GetAlarmResolutionsByUserId(id, alarmEventByUser) {
     AlarmEvent.findAll({
         include: [{
             model: Users,
@@ -185,11 +190,11 @@ function GetAlarmResolutionsByUserId(id, alarmEventByUser) {
     }).then(alarmEvent => {
         alarmEventByUser(alarmEvent)
     })
+}
 };
 
-
-GetAllAlarms(x);
-GetAlarmResolutionsByUserId(1, y);
+//GetAllAlarms(x);
+//GetAlarmResolutionsByUserId(1, y);
 
 
 

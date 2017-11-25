@@ -41,8 +41,12 @@ app.put('/api/sensorStatus', function (req, res) {
    res.send();
 });
 
-app.get('/api/alarmResolution', function(req, res){
-   res.send('test')
+app.post('/api/alarmResolution', function(req, res){
+   var alarmId = req.body.alarmId;
+    var getResolution = function(alarm){
+         res.send(alarm.Resolution);
+    }
+   dblayer.getAlarmById(alarmId, getResolution);
 });
 
 app.put('/api/resolveAlarm', function (req, res) {
@@ -58,6 +62,7 @@ app.put('/api/alarmEvent', function (req, res) {
    var sensorId = req.body.sensorId;
    var timestamp = req.body.deviceTimestamp;
 
+   res.send()
 });
 
 module.exports = app;
