@@ -20,7 +20,7 @@ let http = require('http');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -30,7 +30,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
+//app.use('/', index);
 app.use('/users', users);
 
 app.listen(globals.portNumber);
@@ -38,6 +38,9 @@ console.log("Listening on port " + globals.portNumber);
 
 var server = http.createServer(app);
 server.listen(globals.webSocketPort);
+
+var sensorsDataMap = new Map();
+
 
 var wss = new WSServer({
     server: server
@@ -52,12 +55,28 @@ wss.broadcast = function broadcast(data) {
     });
 };
 
+app.get('/', function (req, res) {
+
+   var sensorsDataArray = [];
+   sensorsDataMap.forEach(function (value, key, map) {
+      var sensorDataJson = { key: key, value: value };
+
+      sensorsDataArray.push(sensorDataJson);
+   });
+
+   res.render('index', { sensorsData: sensorsDataArray });
+});
+
 app.put('/api/sensorStatus', function (req, res) {
    var sensorId = req.body.sensorId;
    var sensorData = req.body.sensorData;
    var statusCode = req.body.statusCode;
 
    console.log("Received sensor status from: " + sensorId + " with sensor data: " + JSON.stringify (sensorData) + ", status code: " + statusCode);
+
+   var data = { sensorData : sensorData, statusCode : statusCode }
+
+   sensorsDataMap.set(sensorId, data);
 
    //show this on screen somehow
     wss.broadcast(JSON.stringify({sensorId:sensorId, sensorData: sensorData, statusCode: statusCode}));

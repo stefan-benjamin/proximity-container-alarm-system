@@ -1,0 +1,17 @@
+﻿doctype html
+html
+  head
+  script(src='/js/jquery-3.2.1.js')
+  script(src='/js/view.js')
+  title Container Monitor Center
+
+  body
+  h1 Container Monitor Center
+
+  h2 Sensors
+    ul
+        each val in sensorsData
+            li Sensor:  #{val.key}, !{JSON.stringify(val.value)}
+
+
+
