@@ -9,14 +9,18 @@ html
   h1 Container Monitor Center
 
   h2 Sensors
-    ul
+    ul(id='sensors-list')
         each val in sensorsData
-            li Sensor:  #{val.key}, !{JSON.stringify(val.value)}
+            li Sensor: #{val.key} 
+                a(id='s'+val.key) !{JSON.stringify(val.value)}
 
   h2 Newest alarms
-    ul
+    ul(id='alarms-list')
         each val in alarms
-            li Sensor:  #{val.key}, !{JSON.stringify(val.value)}
+            li Alarm: #{val.key} 
+                a(id='a'+val.key) !{JSON.stringify(val.value)}
+
+  
 
 
 
