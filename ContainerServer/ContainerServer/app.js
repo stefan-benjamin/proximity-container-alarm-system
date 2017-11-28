@@ -48,9 +48,10 @@ wss.on("connection", function (ws) {
    console.log('WebSocket connection open...');
 });
 
-wss.broadcast = function broadcast(data) {
+wss.broadcast = function broadcast(data, type) {
    wss.clients.forEach(function each(client) {
-      client.send(data);
+      data.type = type;
+      client.send(JSON.stringify(data));
    });
 };
 
@@ -103,7 +104,7 @@ app.put('/api/sensorStatus', function (req, res) {
    sensorsDataMap.set(sensorId, data);
    
    //show this on screen somehow
-   wss.broadcast(JSON.stringify({ sensorId: sensorId, sensorData: sensorData, statusCode: statusCode }));
+   wss.broadcast({ sensorId: sensorId, data }, 'sensor');
    res.send();
 });
 
@@ -133,6 +134,16 @@ app.put('/api/alarmResolution', function (req, res) {
    var sensorId = req.body.sensorId;
    var technicianId = req.body.technicianId;
    
+   if (alarmsMap.has(sensorId)) {
+      alarmsMap.get(sensorId).resolved = "Resolved by technician " + technicianId;
+      console.log("Alarm resolved: sensorId: " + sensorId + " technicianId: " + technicianId);
+      var alarmValue = alarmsMap.get(sensorId);
+
+      var data = { sensorData: alarmValue.sensorData, statusCode: alarmValue.statusCode, resolved: alarmValue.resolved }
+      alarmsMap.set(sensorId, data);
+
+      wss.broadcast({ sensorId: sensorId, data: data }, 'alarm');
+   }
   // if (alarmsMap.has(sensorId)) {
   //    alarmsMap.get(sensorId).resolved = "Resolved by technician " + technicianId;
   //    console.log("Alarm resolved: sensorId: " + sensorId + " technicianId: " + technicianId);

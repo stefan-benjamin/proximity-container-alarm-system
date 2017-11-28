@@ -1,6 +1,7 @@
 package com.iot.zulu.androidproximitymonitor;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +11,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class BleDevicesAdapter extends ArrayAdapter<BleDevice> {
-    public BleDevicesAdapter(Context context, ArrayList<BleDevice> users) {
-        super(context, 0, users);
+    public BleDevicesAdapter(Context context, ArrayList<BleDevice> devices) {
+        super(context, 0, devices);
     }
 
     @Override
@@ -28,8 +29,16 @@ public class BleDevicesAdapter extends ArrayAdapter<BleDevice> {
         bName.setText(device.name);
         bMAC.setText(device.MAC);
         bRSSI.setText(device.RSSI);
+
+        //Set the color of elements
+        if(device.name != null) {
+            String[] split = device.name.split(";");
+            if (split.length > 1 && !split[1].equals("1000")){
+                convertView.setBackgroundColor(Color.RED);
+            } else if(split.length > 1 && split[1].equals("1000")) {
+                convertView.setBackgroundColor(Color.GREEN);
+            }
+        }
         return convertView;
     }
-
 }
-

@@ -1,43 +1,57 @@
-﻿
+﻿$(document).ready(function () {
 
+   //setTimeout(function () {
+   //   window.location.reload(1);
+   //}, 3000);
 
-$(document).ready(function () {
+   var host = window.document.location.host.replace(/:.*/, '');
+   var ws = new WebSocket('ws://' + host + ':8081');
+   ws.onmessage = function (event) {
+      //alert("Message received.");
+      //console.log(event);
 
-   setTimeout(function () {
-      window.location.reload(1);
-   }, 3000);
-   
-//   $('#ledOffButton').click(function () {
-//      sendLedChangeRequest(0);
-//   });
+      var data = JSON.parse(event.data);
 
-//   $('#ledOnButton').click(function () {
-//      sendLedChangeRequest(1);
-//   });
+      var prefix;
+      if (data.type === 'sensor')
+      {
+         prefix = 's';
+      }
+      else
+      {
+         prefix = 'a';
+      }
 
-//   $('#envReadButton').click(function () {
-//      $.getJSON('/sensors/environment', null, function (resultData) {
-//         $("#resultDiv").empty().append(JSON.stringify(resultData));
-//      });
-//   });
+      //get element
+      var element = document.getElementById(prefix + data.sensorId);
 
-//   function sendLedChangeRequest(value)
-//   {
-//      var data = { value: value };
+      if (element) {
+         delete data.sensorId;
+         delete data.type;
 
-//      $.ajax({
-//         url: '/actuators/led',
-//         method: 'PUT',
-//         data: JSON.stringify(data),
-//         contentType: 'application/json',
-//         success: function (result) {
-//            // handle success
-//         },
-//         error: function (request, msg, error) {
-//            // handle failure
-//         }
-//      });
-//   }
+         //set element text
 
+         element.innerText = JSON.stringify(data.data);
+         console.log("Updated");
+      }
+      else
+      {
+         //create a new element and add it to the list.
+         var list, entry;
+         entry = document.createElement('li');
+         if (data.type === 'sensor')
+         {
+            list = document.getElementById('sensors-list');
+            entry.innerHTML = "Sensor: " + data.sensorId + " <a id=" + prefix + data.sensorId + ">" + JSON.stringify(data.data) + "</a>";
+         }
+         else
+         {
+            list = document.getElementById('alarms-list');
+            entry.innerHTML = "Alarm: " + data.sensorId + " <a id=" + prefix + data.sensorId + ">" + JSON.stringify(data.data) + "</a>";
+         }
+         
+         list.appendChild(entry);
+      }
+   };
 });
 
