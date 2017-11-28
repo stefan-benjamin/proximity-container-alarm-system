@@ -150,20 +150,4 @@ app.put('/api/alarmResolution', function (req, res) {
    res.send();
 });
 
-//SB: Maybe we don't need this method - it is up to the server to determine
-//when an alarm is present - based on the sensor status code.
-app.put('/api/alarmEvent', function (req, res) {
-   var alarmId = req.body.alarmId;
-   var sensorId = req.body.sensorId;
-   var timestamp = req.body.deviceTimestamp;
-
-   var saveAlarmEvent = alarmEvent.build({
-      AlarmId: alarmId,
-      DeviceId: sensorId,
-      Timestamp: timestamp
-   });
-   dblayer.saveAlarmEvent(saveAlarmEvent);
-   res.send()
-});
-
 module.exports = app;
