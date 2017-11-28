@@ -63,3 +63,4 @@ freeline_project_description.json
 /ContainerServer/.vs/ContainerServer/v15
 /ContainerServer/ContainerServer/obj/Debug
 /ContainerServer/.vs/config
+/DBScripts/containerSystem.db
