@@ -65,13 +65,34 @@ app.get('/', function (req, res) {
    });
 
    var alarmsArray = [];
-   alarmsMap.forEach(function (value, key, map) {
-      var alarmJson = { key: key, value: value };
+   var currentAlarm;
+   var getAlarmData = function (alarm) {
+       currentAlarm = alarm;
+   };
 
-      alarmsArray.push(alarmJson);
-   });
+   var getAllActiveAlarms = function(activeAlarms){
+       alarmsArray = activeAlarms;
+   };
 
-   res.render('index', { sensorsData: sensorsDataArray, alarms: alarmsArray });
+   var getAllIds = function(IdList){
+       dblayer.getAllActiveAlarms(IdList, getAllActiveAlarms);
+   };
+   dblayer.getAllResolvedAlarmsIds(getAllIds);
+
+   //alarmsMap.forEach(function (value, key, map) {
+   //   var alarmJson = { key: key, value: value };
+
+   //   alarmsArray.push(alarmJson);
+  // });
+    var jsonAlarmsArray = [];
+    alarmsArray.forEach(function (alarm) {
+        dblayer.getAlarmById(alarm.AlarmId, getAlarmData);
+        var sensorData =  JSON.parse(alarm.SensorData);
+        var values = {sensorData: sensorData, statusCode: currentAlarm.StatusCode };
+        var alarmJson = {key: alarm.DeviceId, value: values};
+        jsonAlarmsArray.push(alarmJson);
+    });
+   res.render('index', { sensorsData: sensorsDataArray, alarms: jsonAlarmsArray });
 });
 
 app.put('/api/sensorStatus', function (req, res) {
@@ -86,7 +107,8 @@ app.put('/api/sensorStatus', function (req, res) {
        var saveAlarmEvent = alarmEvent.build({
            AlarmId: alarm.Id,
            DeviceId: sensorId,
-           Timestamp: currentTimeStamp
+           Timestamp: currentTimeStamp,
+           SensorData: JSON.stringify(sensorData)
        });
        dblayer.saveAlarmEvent(saveAlarmEvent);
    }
