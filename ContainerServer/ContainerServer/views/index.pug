@@ -13,5 +13,10 @@ html
         each val in sensorsData
             li Sensor:  #{val.key}, !{JSON.stringify(val.value)}
 
+  h2 Newest alarms
+    ul
+        each val in alarms
+            li Sensor:  #{val.key}, !{JSON.stringify(val.value)}
+
 
 

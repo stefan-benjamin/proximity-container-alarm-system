@@ -40,19 +40,20 @@ var server = http.createServer(app);
 server.listen(globals.webSocketPort);
 
 var sensorsDataMap = new Map();
+var alarmsMap = new Map();
 
 
 var wss = new WSServer({
-    server: server
+   server: server
 });
 wss.on("connection", function (ws) {
- console.log('WebSocket connection open...');
+   console.log('WebSocket connection open...');
 });
 
 wss.broadcast = function broadcast(data) {
-    wss.clients.forEach(function each(client) {
-        client.send(data);
-    });
+   wss.clients.forEach(function each(client) {
+      client.send(data);
+   });
 };
 
 app.get('/', function (req, res) {
@@ -64,7 +65,14 @@ app.get('/', function (req, res) {
       sensorsDataArray.push(sensorDataJson);
    });
 
-   res.render('index', { sensorsData: sensorsDataArray });
+   var alarmsArray = [];
+   alarmsMap.forEach(function (value, key, map) {
+      var alarmJson = { key: key, value: value };
+
+      alarmsArray.push(alarmJson);
+   });
+
+   res.render('index', { sensorsData: sensorsDataArray, alarms: alarmsArray });
 });
 
 app.put('/api/sensorStatus', function (req, res) {
@@ -72,50 +80,88 @@ app.put('/api/sensorStatus', function (req, res) {
    var sensorData = req.body.sensorData;
    var statusCode = req.body.statusCode;
 
-   console.log("Received sensor status from: " + sensorId + " with sensor data: " + JSON.stringify (sensorData) + ", status code: " + statusCode);
+   console.log("Received sensor status from: " + sensorId + " with sensor data: " + JSON.stringify(sensorData) + ", status code: " + statusCode);
+   
+   //add the alarm to the database if it is an issue - different from the ok status code.
+   if (sensorsDataMap.has(sensorId)) {
+      if (sensorsDataMap.get(sensorId).statusCode === "1000" && statusCode !== "1000") {
+         var data = { sensorData: sensorData, statusCode: statusCode, resolved: false }
+         alarmsMap.set(sensorId, data);
+      }
+   }
 
-   var data = { sensorData : sensorData, statusCode : statusCode }
-
+   var data = { sensorData: sensorData, statusCode: statusCode }
    sensorsDataMap.set(sensorId, data);
-
+   
    //show this on screen somehow
-    wss.broadcast(JSON.stringify({sensorId:sensorId, sensorData: sensorData, statusCode: statusCode}));
+   wss.broadcast(JSON.stringify({ sensorId: sensorId, sensorData: sensorData, statusCode: statusCode }));
    res.send();
 });
 
-app.post('/api/alarmResolution', function(req, res){
-   var alarmId = req.body.alarmId;
-    var getResolution = function(alarm){
-         res.send({alarmResolution: alarm.Resolution, alarmDescription: alarm.Description});
-    }
-   dblayer.getAlarmById(alarmId, getResolution);
+app.get('/api/alarmInfo', function (req, res) {
+   var statusCode = req.headers.statuscode;
+   var resolution, description;
+   
+   if (statusCode === "1000") 
+   {
+      description = "Status OK.";
+      resolution = "No action needed."
+   }
+   else if (statusCode === "2001")
+   {
+      description = "Lower temperature threshold exceeded. Container temperature too low.";
+      resolution = "Reduce the cooling flow by using the valve on the right side of the container."
+   }
+   else if (statusCode === "2002")
+   {
+      description = "Upper temperature threshold exceeded. Container temperature too high.";
+      resolution = "Increase the cooling flow by using the valve on the right side of the container."
+   }
+   else if (statusCode === "3001")
+   {
+      description = "Sensor error.";
+      resolution = "Check that the sensor is mounted correctly. Additional wiring checks should be performed."
+   }
+
+   res.send({ alarmResolution: resolution, alarmDescription: description });
+
+   //var getResolution = function(alarm){
+   //     res.send({alarmResolution: alarm.Resolution, alarmDescription: alarm.Description});
+   //}
+   //dblayer.getAlarmById(alarmId, getResolution);
 });
 
-app.put('/api/resolveAlarm', function (req, res) {
-   var alarmId = req.body.alarmId;
+app.put('/api/alarmResolution', function (req, res) {
+   var sensorId = req.body.sensorId;
    var technicianId = req.body.technicianId;
    var alarmEventTimestamp = req.body.alarmEventTimestamp;
-   console.log("Funky stuff alarmId: " + alarmId + " technicianId: " + technicianId + " with timestamp: " + alarmEventTimestamp )
+   
+   if (alarmsMap.has(sensorId)) {
+      alarmsMap.get(sensorId).resolved = "Resolved by technician " + technicianId;
+      console.log("Alarm resolved: sensorId: " + sensorId + " technicianId: " + technicianId);
+   }
 
-   var saveAlarmEventResolution = alarmEventResolution.build({
-    AlarmEventId: alarmId,
-    UserId: technicianId,
-    Timestamp: alarmEventTimestamp
-});
-   dblayer.saveAlarmEventResolution(saveAlarmEventResolution);
+   //var saveAlarmEventResolution = alarmEventResolution.build({
+   //   AlarmEventId: alarmId,
+   //   UserId: technicianId,
+   //   Timestamp: alarmEventTimestamp
+   //});
+   //dblayer.saveAlarmEventResolution(saveAlarmEventResolution);
    res.send();
 });
 
+//SB: Maybe we don't need this method - it is up to the server to determine
+//when an alarm is present - based on the sensor status code.
 app.put('/api/alarmEvent', function (req, res) {
    var alarmId = req.body.alarmId;
    var sensorId = req.body.sensorId;
    var timestamp = req.body.deviceTimestamp;
 
    var saveAlarmEvent = alarmEvent.build({
-       AlarmId: alarmId,
-       DeviceId: sensorId,
-       Timestamp: timestamp
-   }) ;
+      AlarmId: alarmId,
+      DeviceId: sensorId,
+      Timestamp: timestamp
+   });
    dblayer.saveAlarmEvent(saveAlarmEvent);
    res.send()
 });
