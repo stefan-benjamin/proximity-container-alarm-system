@@ -16,14 +16,18 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -35,7 +39,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static int REQUEST_ENABLE_BT = 1;
-    private static final long SCAN_PERIOD = 10000;
 
     private boolean buttonFlag = true;
     private boolean deviceFoundFlag = false;
@@ -48,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
     private ScanSettings settings;
     private List<ScanFilter> filters;
     private BleDevicesAdapter adapter;
-    private Handler mHandler;
+    private String serverAddress = "http://192.168.43.250:8080";
+    private String technicianId = "1";
 
     private ListView listView;
     private Button button;
@@ -83,60 +87,52 @@ public class MainActivity extends AppCompatActivity {
         listView = findViewById(R.id.listViewBleDevices);
 
         bleDevices = new ArrayList<>();
-        bleDevices.add(new BleDevice("test Name", "00:11:22:33:44:55", "-69"));
+        bleDevices.add(new BleDevice("Test dummy devices", "Scan for actual results", ""));
+        bleDevices.add(new BleDevice("test1;1000", "00:11:22:33:44:55", "-69"));
+        bleDevices.add(new BleDevice("test2;2001", "00:11:22:33:44:66", "-69"));
         adapter = new BleDevicesAdapter(this, bleDevices);
 
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(getApplicationContext(), "MAC: " + bleDevices.get(position).MAC, Toast.LENGTH_SHORT).show();
-                //restClient = new RESTClient(getApplicationContext(),0);
-                //restClient.execute();
-                final int l = position;
-                AlertDialog.Builder builder;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new AlertDialog.Builder(MainActivity.this, android.R.style.Theme_DeviceDefault_Light_Dialog);
-                } else {
-                    builder = new AlertDialog.Builder(MainActivity.this);
+                if (!buttonFlag) {
+                    buttonFlag = false;
+                    toggleBLEScanning();
                 }
-                builder.setTitle("Possible leakage")
-                        .setMessage("Open the container and check the boxes for the leakage")
-                        .setPositiveButton("Resolve problem", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getApplicationContext(), "MAC: " + bleDevices.get(l).MAC, Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // do nothing
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
+                String[] splitName = bleDevices.get(position).name.split(";");
+                if (splitName.length > 1) {
+                    restClient = new RESTClient(MainActivity.this, splitName[0], splitName[1], serverAddress, technicianId);
+                    restClient.execute();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Not a valid sensor", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         final BluetoothManager bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
-        mHandler = new Handler();
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (buttonFlag) {
-                    bleDevices.clear();
-                    button.setText("Stop scan");
-                    progressBar.setVisibility(View.VISIBLE);
-                    scanLeDevice(true);
-                } else {
-                    button.setText("Scan");
-                    progressBar.setVisibility(View.INVISIBLE);
-                    scanLeDevice(false);
-                }
-                buttonFlag = !buttonFlag;
+                toggleBLEScanning();
             }
         });
+    }
+
+    public void toggleBLEScanning() {
+        if (buttonFlag) {
+            bleDevices.clear();
+            button.setText("Stop scan");
+            progressBar.setVisibility(View.VISIBLE);
+            scanLeDevice(true);
+        } else {
+            button.setText("Scan");
+            progressBar.setVisibility(View.INVISIBLE);
+            scanLeDevice(false);
+        }
+        buttonFlag = !buttonFlag;
     }
 
     @Override
@@ -153,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
                         .build();
                 filters = new ArrayList<ScanFilter>();
             }
-            //scanLeDevice(true);
         }
     }
 
@@ -161,23 +156,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
-            scanLeDevice(false);
+            if (!buttonFlag) {
+                buttonFlag = false;
+                toggleBLEScanning();
+            }
         }
     }
 
     private void scanLeDevice(final boolean enable) {
         if (enable) {
-            //Stop scanning after some time
-//            mHandler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    if (Build.VERSION.SDK_INT < 21) {
-//                        mBluetoothAdapter.stopLeScan(mLeScanCallback);
-//                    } else {
-//                        mLEScanner.stopScan(mScanCallback);
-//                    }
-//                }
-//            }, SCAN_PERIOD);
             if (Build.VERSION.SDK_INT < 21) {
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
             } else {
@@ -195,42 +182,41 @@ public class MainActivity extends AppCompatActivity {
     private ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
-            //Log.i("callbackType", String.valueOf(callbackType));
-            Log.i("result", result.toString());
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 BluetoothDevice btDevice = result.getDevice();
                 RSSI = String.valueOf(result.getRssi());
                 DeviceName = btDevice.getName();
                 MAC = btDevice.getAddress();
 
-                BleDevice btDeviceAdd = new BleDevice(DeviceName, MAC, RSSI);
-
-                deviceFoundFlag = false;
-                int index = 0;
-                for (BleDevice curVal : bleDevices) {
-                    if (curVal.MAC.contains(MAC)) {
-                        deviceFoundFlag = true;
-                        index = bleDevices.indexOf(curVal);
-                        break;
+                //Check if the name is not empty
+                if (DeviceName != null) {
+                    BleDevice btDeviceAdd = new BleDevice(DeviceName, MAC, RSSI);
+                    deviceFoundFlag = false;
+                    int index = 0;
+                    //Add only new devices(new MAC) and update the rest
+                    for (BleDevice curVal : bleDevices) {
+                        if (curVal.MAC.contains(MAC)) {
+                            deviceFoundFlag = true;
+                            index = bleDevices.indexOf(curVal);
+                            break;
+                        }
                     }
-                }
-                if (!deviceFoundFlag) {
-                    bleDevices.add(btDeviceAdd);
-
-                } else {
-                    bleDevices.set(index, btDeviceAdd);
-                }
-                Collections.sort(bleDevices, new Comparator<BleDevice>() {
-                    @Override
-                    public int compare(BleDevice o1, BleDevice o2) {
-                        return o1.compareTo(o2);
+                    if (!deviceFoundFlag) {
+                        bleDevices.add(btDeviceAdd);
+                    } else {
+                        bleDevices.set(index, btDeviceAdd);
                     }
-                });
-                adapter = new BleDevicesAdapter(getApplicationContext(), bleDevices);
-                listView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
+                    Collections.sort(bleDevices, new Comparator<BleDevice>() {
+                        @Override
+                        public int compare(BleDevice o1, BleDevice o2) {
+                            return o1.compareTo(o2);
+                        }
+                    });
+                    adapter = new BleDevicesAdapter(getApplicationContext(), bleDevices);
+                    listView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                }
             }
-            //connectToDevice(btDevice);
         }
 
         @Override
@@ -254,10 +240,74 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Log.i("onLeScan", device.toString());
-                            //connectToDevice(device);
+                            //Log.i("onLeScan", device.toString());
                         }
                     });
                 }
             };
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle menu items selection
+        switch (item.getItemId()) {
+            case R.id.server_address:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Light_Dialog);
+                builder.setTitle("Change server address");
+
+                final EditText input = new EditText(this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setView(input);
+                input.setText(serverAddress);
+
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        serverAddress = input.getText().toString();
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+                return true;
+
+            case R.id.technician_Id:
+                AlertDialog.Builder builder2 = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Light_Dialog);
+                builder2.setTitle("Change technician ID");
+
+                final EditText input2 = new EditText(this);
+                input2.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder2.setView(input2);
+                input2.setText(technicianId);
+
+                builder2.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        technicianId = input2.getText().toString();
+                    }
+                });
+                builder2.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder2.show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }
