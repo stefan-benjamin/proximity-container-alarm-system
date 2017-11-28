@@ -3,7 +3,8 @@ module.exports = (sequelize, DataTypes) => {
             Id: {type: DataTypes.INTEGER, primaryKey: true, autoincrement: true},
             Name: {type: DataTypes.STRING},
             Description: {type: DataTypes.STRING},
-            Resolution: {type: DataTypes.STRING}
+            Resolution: {type: DataTypes.STRING},
+            StatusCode: {type: DataTypes.STRING}
         },
         {
             freezeTableName: true,
