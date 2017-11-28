@@ -22,8 +22,6 @@ let http = require('http');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -81,16 +79,27 @@ app.put('/api/sensorStatus', function (req, res) {
    var statusCode = req.body.statusCode;
 
    console.log("Received sensor status from: " + sensorId + " with sensor data: " + JSON.stringify(sensorData) + ", status code: " + statusCode);
+
+   var getAlarmIdAndSaveEvent = function (alarm) {
+       var currentTimeStamp = new Date().toLocaleString();
+       var saveAlarmEvent = alarmEvent.build({
+           AlarmId: alarm.Id,
+           DeviceId: sensorId,
+           Timestamp: currentTimeStamp
+       });
+       dblayer.saveAlarmEvent(saveAlarmEvent);
+   }
    
    //add the alarm to the database if it is an issue - different from the ok status code.
    if (sensorsDataMap.has(sensorId)) {
       if (sensorsDataMap.get(sensorId).statusCode === "1000" && statusCode !== "1000") {
-         var data = { sensorData: sensorData, statusCode: statusCode, resolved: false }
-         alarmsMap.set(sensorId, data);
+          dblayer.getAlarmByStatusCode(statusCode, getAlarmIdAndSaveEvent);
+            var data = { sensorData: sensorData, statusCode: statusCode, resolved: false }
+            //alarmsMap.set(sensorId, data);
       }
    }
 
-   var data = { sensorData: sensorData, statusCode: statusCode }
+   var data = { sensorData: sensorData, statusCode: statusCode };
    sensorsDataMap.set(sensorId, data);
    
    //show this on screen somehow
@@ -101,52 +110,45 @@ app.put('/api/sensorStatus', function (req, res) {
 app.get('/api/alarmInfo', function (req, res) {
    var statusCode = req.headers.statuscode;
    var resolution, description;
+
+   var getResolution = function(alarm){
+        res.send({alarmResolution: alarm.Resolution, alarmDescription: alarm.Description});
+   }
    
    if (statusCode === "1000") 
    {
       description = "Status OK.";
       resolution = "No action needed."
    }
-   else if (statusCode === "2001")
+   else
    {
-      description = "Lower temperature threshold exceeded. Container temperature too low.";
-      resolution = "Reduce the cooling flow by using the valve on the right side of the container."
+       dblayer.getAlarmByStatusCode(statusCode, getResolution);
+       return;
    }
-   else if (statusCode === "2002")
-   {
-      description = "Upper temperature threshold exceeded. Container temperature too high.";
-      resolution = "Increase the cooling flow by using the valve on the right side of the container."
-   }
-   else if (statusCode === "3001")
-   {
-      description = "Sensor error.";
-      resolution = "Check that the sensor is mounted correctly. Additional wiring checks should be performed."
-   }
-
    res.send({ alarmResolution: resolution, alarmDescription: description });
 
-   //var getResolution = function(alarm){
-   //     res.send({alarmResolution: alarm.Resolution, alarmDescription: alarm.Description});
-   //}
-   //dblayer.getAlarmById(alarmId, getResolution);
 });
 
 app.put('/api/alarmResolution', function (req, res) {
    var sensorId = req.body.sensorId;
    var technicianId = req.body.technicianId;
-   var alarmEventTimestamp = req.body.alarmEventTimestamp;
    
-   if (alarmsMap.has(sensorId)) {
-      alarmsMap.get(sensorId).resolved = "Resolved by technician " + technicianId;
-      console.log("Alarm resolved: sensorId: " + sensorId + " technicianId: " + technicianId);
-   }
+  // if (alarmsMap.has(sensorId)) {
+  //    alarmsMap.get(sensorId).resolved = "Resolved by technician " + technicianId;
+  //    console.log("Alarm resolved: sensorId: " + sensorId + " technicianId: " + technicianId);
+  // }
 
-   //var saveAlarmEventResolution = alarmEventResolution.build({
-   //   AlarmEventId: alarmId,
-   //   UserId: technicianId,
-   //   Timestamp: alarmEventTimestamp
-   //});
-   //dblayer.saveAlarmEventResolution(saveAlarmEventResolution);
+   var currentTimestamp  = new Date().toLocaleString();
+   var getActiveAlarmId = function(activeAlarmId){
+       var saveAlarmEventResolution = alarmEventResolution.build({
+           AlarmEventId: activeAlarmId,
+           UserId: technicianId,
+           Timestamp:currentTimestamp
+       });
+       dblayer.saveAlarmEventResolution(saveAlarmEventResolution);
+   };
+
+   dblayer.getCurrentActiveAlarmForSensor(sensorId, getActiveAlarmId);
    res.send();
 });
 

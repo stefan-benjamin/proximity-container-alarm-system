@@ -24,6 +24,14 @@ module.exports = {
     })
 },
 
+getAlarmByStatusCode: function GetAlarmByStatusCode(statusCode, getByStatusCode){
+  Alarm.findOne({
+      where:{statusCode: statusCode}
+  }).then(alarm => {
+      getByStatusCode(alarm)
+  })
+},
+
 getAllAlarmEvents: function GetAllAlarmEvents(getAlarmEvents) {
     AlarmEvent.findAll().then(alarmEvent => {
         getAlarmEvents(alarmEvent)
@@ -101,5 +109,15 @@ getAlarmResolutionsByUserId: function GetAlarmResolutionsByUserId(id, alarmEvent
     }).then(alarmEvent => {
         alarmEventByUser(alarmEvent)
     })
+},
+
+getCurrentActiveAlarmForSensor: function GetCurrentActiveAlarmIdForSensor(sensorId, activeAlarmId ){
+  AlarmEvent.max('Id', {
+      where: {
+          DeviceId:sensorId
+      }
+  }).then(currentalarmEvent => {
+      activeAlarmId(currentalarmEvent)
+  })
 }
 };
