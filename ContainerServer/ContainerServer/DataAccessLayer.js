@@ -5,7 +5,6 @@ var AlarmEvent = models.AlarmEvent;
 var AlarmEventResolution = models.AlarmEventResolution;
 var Users = models.Users;
 var Devices = models.Devices;
-var Index = models.index;
 var sequelize = require('sequelize');
 
 var op = sequelize.Op;
@@ -142,5 +141,17 @@ getAllActiveAlarms: function GetAllActiveAlarms(resolvedIds, activeAlarm){
   }).then(activeAlarms =>{
       activeAlarm(activeAlarms)
   })
+},
+
+getAllActiveAlarmEvents: function GetAllActiveAlarmEvents(activeAlarms){
+    AlarmEvent.findAll({
+        where:{
+            Id:{
+                $notIn: sequelize.literal('SELECT AlarmEventId FROM AlarmEventResolution')
+            }
+        }
+    }).then(activeAlarm =>{
+        activeAlarms(activeAlarm)
+    })
 }
 };
