@@ -5,6 +5,9 @@ var AlarmEvent = models.AlarmEvent;
 var AlarmEventResolution = models.AlarmEventResolution;
 var Users = models.Users;
 var Devices = models.Devices;
+var Index = models.index;
+
+var op = Index.sequelize.Op;
 
 module.exports = {
  getAllAlarms:   function GetAllAlarms(getAlarms)
@@ -118,6 +121,25 @@ getCurrentActiveAlarmForSensor: function GetCurrentActiveAlarmIdForSensor(sensor
       }
   }).then(currentalarmEvent => {
       activeAlarmId(currentalarmEvent)
+  })
+},
+
+getAllResolvedAlarmsIds: function GetAllResolvedAlarmsIds(alarmIds) {
+    AlarmEventResolution.findAll({
+        Attributes:['Id']
+    }).then(resolvedIds => {
+        alarmIds(resolvedIds)
+    })
+},
+
+getAllActiveAlarms: function GetAllActiveAlarms(resolvedIds, activeAlarm){
+  AlarmEvent.findAll({where:{
+      Id:{
+          [op.notIn]:resolvedIds
+      }
+  }
+  }).then(activeAlarms =>{
+      activeAlarm(activeAlarms)
   })
 }
 };

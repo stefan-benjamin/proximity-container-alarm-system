@@ -3,7 +3,8 @@ module.exports = (sequelize, DataTypes) => {
             Id: {type: DataTypes.INTEGER, primaryKey: true, autoincrement: true},
             AlarmId: {type: DataTypes.INTEGER},
             Timestamp: {type: DataTypes.STRING},
-            DeviceId: {type: DataTypes.INTEGER}
+            DeviceId: {type: DataTypes.INTEGER},
+            SensorData: {type: DataTypes.STRING}
         },
         {
             freezeTableName: true,
