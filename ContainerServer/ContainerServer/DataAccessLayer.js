@@ -6,8 +6,9 @@ var AlarmEventResolution = models.AlarmEventResolution;
 var Users = models.Users;
 var Devices = models.Devices;
 var Index = models.index;
+var sequelize = require('sequelize');
 
-var op = Index.sequelize.Op;
+var op = sequelize.Op;
 
 module.exports = {
  getAllAlarms:   function GetAllAlarms(getAlarms)

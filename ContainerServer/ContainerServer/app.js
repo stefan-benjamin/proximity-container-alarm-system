@@ -58,7 +58,7 @@ wss.broadcast = function broadcast(data, type) {
 app.get('/', function (req, res) {
 
    var sensorsDataArray = [];
-    var jsonAlarmsArray = [];
+   var jsonAlarmsArray = [];
    sensorsDataMap.forEach(function (value, key, map) {
       var sensorDataJson = { key: key, value: value };
 
@@ -67,24 +67,28 @@ app.get('/', function (req, res) {
 
    var alarmsArray = [];
    var getAlarmData = function (alarm) {
-       currentAlarm = alarm;
+      currentAlarm = alarm;
    };
 
-   var getAllActiveAlarms = function(activeAlarms){
-       alarmsArray = activeAlarms;
-       alarmsArray.forEach(function (alarmEvent) {
-           dblayer.getAlarmById(alarmEvent.AlarmId, function (alarm) {
-               var sensorData = JSON.parse(alarmEvent.SensorData);
-               var values = {sensorData: sensorData, statusCode: alarm.StatusCode};
-               var alarmJson = {key: alarmEvent.DeviceId, value: values};
-               jsonAlarmsArray.push(alarmJson);
-           });
-       })
-       res.render('index', { sensorsData: sensorsDataArray, alarms: jsonAlarmsArray });
+   var getAllActiveAlarms = function (activeAlarms) {
+      alarmsArray = activeAlarms;
+      var itemsProcessed = 0;
+      alarmsArray.forEach(function (alarmEvent) {
+         dblayer.getAlarmById(alarmEvent.AlarmId, function (alarm) {
+            var sensorData = JSON.parse(alarmEvent.SensorData);
+            var values = { sensorData: sensorData, statusCode: alarm.StatusCode };
+            var alarmJson = { key: alarmEvent.DeviceId, value: values };
+            jsonAlarmsArray.push(alarmJson);
+            itemsProcessed++;
+            if (itemsProcessed === alarmsArray.length) {
+               res.render('index', { sensorsData: sensorsDataArray, alarms: jsonAlarmsArray });
+            }
+         });
+      })
    };
 
-   var getAllIds = function(IdList){
-       dblayer.getAllActiveAlarms(IdList, getAllActiveAlarms);
+   var getAllIds = function (IdList) {
+      dblayer.getAllActiveAlarms(IdList, getAllActiveAlarms);
    };
    dblayer.getAllResolvedAlarmsIds(getAllIds);
 
@@ -92,8 +96,8 @@ app.get('/', function (req, res) {
    //   var alarmJson = { key: key, value: value };
 
    //   alarmsArray.push(alarmJson);
-  // });
-  // res.render('index', { sensorsData: sensorsDataArray, alarms: jsonAlarmsArray });
+   // });
+   // res.render('index', { sensorsData: sensorsDataArray, alarms: jsonAlarmsArray });
 });
 
 app.put('/api/sensorStatus', function (req, res) {
@@ -104,28 +108,33 @@ app.put('/api/sensorStatus', function (req, res) {
    console.log("Received sensor status from: " + sensorId + " with sensor data: " + JSON.stringify(sensorData) + ", status code: " + statusCode);
 
    var getAlarmIdAndSaveEvent = function (alarm) {
-       var currentTimeStamp = new Date().toLocaleString();
-       var saveAlarmEvent = alarmEvent.build({
-           AlarmId: alarm.Id,
-           DeviceId: sensorId,
-           Timestamp: currentTimeStamp,
-           SensorData: JSON.stringify(sensorData)
-       });
-       dblayer.saveAlarmEvent(saveAlarmEvent);
+      
+      var currentTimeStamp = new Date().toLocaleString();
+      var saveAlarmEvent = alarmEvent.build({
+         AlarmId: alarm.Id,
+         DeviceId: sensorId,
+         Timestamp: currentTimeStamp,
+         SensorData: JSON.stringify(sensorData)
+      });
+
+      //check if it's active already and in the callback - call the next line
+      dblayer.saveAlarmEvent(saveAlarmEvent);
    }
-   
+
    //add the alarm to the database if it is an issue - different from the ok status code.
    if (sensorsDataMap.has(sensorId)) {
       if (sensorsDataMap.get(sensorId).statusCode === "1000" && statusCode !== "1000") {
-          dblayer.getAlarmByStatusCode(statusCode, getAlarmIdAndSaveEvent);
-            var data = { sensorData: sensorData, statusCode: statusCode, resolved: false }
-            //alarmsMap.set(sensorId, data);
+         dblayer.getAlarmByStatusCode(statusCode, getAlarmIdAndSaveEvent);
+         var data = { sensorData: sensorData, statusCode: statusCode }
+         //alarmsMap.set(sensorId, data);
+
+         wss.broadcast({ sensorId: sensorId, data }, 'alarm');
       }
    }
 
    var data = { sensorData: sensorData, statusCode: statusCode };
    sensorsDataMap.set(sensorId, data);
-   
+
    //show this on screen somehow
    wss.broadcast({ sensorId: sensorId, data }, 'sensor');
    res.send();
@@ -135,19 +144,17 @@ app.get('/api/alarmInfo', function (req, res) {
    var statusCode = req.headers.statuscode;
    var resolution, description;
 
-   var getResolution = function(alarm){
-        res.send({alarmResolution: alarm.Resolution, alarmDescription: alarm.Description});
+   var getResolution = function (alarm) {
+      res.send({ alarmResolution: alarm.Resolution, alarmDescription: alarm.Description });
    }
-   
-   if (statusCode === "1000") 
-   {
+
+   if (statusCode === "1000") {
       description = "Status OK.";
       resolution = "No action needed."
    }
-   else
-   {
-       dblayer.getAlarmByStatusCode(statusCode, getResolution);
-       return;
+   else {
+      dblayer.getAlarmByStatusCode(statusCode, getResolution);
+      return;
    }
    res.send({ alarmResolution: resolution, alarmDescription: description });
 
@@ -156,30 +163,25 @@ app.get('/api/alarmInfo', function (req, res) {
 app.put('/api/alarmResolution', function (req, res) {
    var sensorId = req.body.sensorId;
    var technicianId = req.body.technicianId;
-   
-   if (alarmsMap.has(sensorId)) {
-      alarmsMap.get(sensorId).resolved = "Resolved by technician " + technicianId;
-      console.log("Alarm resolved: sensorId: " + sensorId + " technicianId: " + technicianId);
-      var alarmValue = alarmsMap.get(sensorId);
 
-      var data = { sensorData: alarmValue.sensorData, statusCode: alarmValue.statusCode, resolved: alarmValue.resolved }
-      alarmsMap.set(sensorId, data);
 
-      wss.broadcast({ sensorId: sensorId, data: data }, 'alarm');
-   }
-  // if (alarmsMap.has(sensorId)) {
-  //    alarmsMap.get(sensorId).resolved = "Resolved by technician " + technicianId;
-  //    console.log("Alarm resolved: sensorId: " + sensorId + " technicianId: " + technicianId);
-  // }
 
-   var currentTimestamp  = new Date().toLocaleString();
-   var getActiveAlarmId = function(activeAlarmId){
-       var saveAlarmEventResolution = alarmEventResolution.build({
-           AlarmEventId: activeAlarmId,
-           UserId: technicianId,
-           Timestamp:currentTimestamp
-       });
-       dblayer.saveAlarmEventResolution(saveAlarmEventResolution);
+
+   wss.broadcast({ sensorId: sensorId }, 'alarm-remove');
+
+   // if (alarmsMap.has(sensorId)) {
+   //    alarmsMap.get(sensorId).resolved = "Resolved by technician " + technicianId;
+   //    console.log("Alarm resolved: sensorId: " + sensorId + " technicianId: " + technicianId);
+   // }
+
+   var currentTimestamp = new Date().toLocaleString();
+   var getActiveAlarmId = function (activeAlarmId) {
+      var saveAlarmEventResolution = alarmEventResolution.build({
+         AlarmEventId: activeAlarmId,
+         UserId: technicianId,
+         Timestamp: currentTimestamp
+      });
+      dblayer.saveAlarmEventResolution(saveAlarmEventResolution);
    };
 
    dblayer.getCurrentActiveAlarmForSensor(sensorId, getActiveAlarmId);

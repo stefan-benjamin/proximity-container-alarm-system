@@ -14,10 +14,10 @@ html
             li Sensor: #{val.key} 
                 a(id='s'+val.key) !{JSON.stringify(val.value)}
 
-  h2 Newest alarms
+  h2 Active alarms
     ul(id='alarms-list')
         each val in alarms
-            li Alarm: #{val.key} 
+            li(id='s'+val.key+'full') Alarm: #{val.key} 
                 a(id='a'+val.key) !{JSON.stringify(val.value)}
 
   

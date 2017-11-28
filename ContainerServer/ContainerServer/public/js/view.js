@@ -12,6 +12,13 @@
 
       var data = JSON.parse(event.data);
 
+      //removal of alarms
+      if (data.type === 'alarm-remove')
+      {
+         $('#a' + data.sensorId + 'full').remove(); //remove the alarm from the list.
+         return;
+      }
+
       var prefix;
       if (data.type === 'sensor')
       {
@@ -47,6 +54,7 @@
          else
          {
             list = document.getElementById('alarms-list');
+            entry.setAttribute("id", prefix + data.sensorId + 'full');
             entry.innerHTML = "Alarm: " + data.sensorId + " <a id=" + prefix + data.sensorId + ">" + JSON.stringify(data.data) + "</a>";
          }
          
