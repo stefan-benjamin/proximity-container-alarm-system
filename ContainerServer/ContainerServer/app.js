@@ -88,7 +88,13 @@ app.get('/', function (req, res) {
    };
 
    var getAllIds = function (IdList) {
-      dblayer.getAllActiveAlarms(IdList, getAllActiveAlarms);
+      var actualIdList = [];
+
+      IdList.forEach(function (value) {
+         actualIdList.push(value.Id);
+      });
+      
+      dblayer.getAllActiveAlarms(actualIdList, getAllActiveAlarms);
    };
    dblayer.getAllResolvedAlarmsIds(getAllIds);
 
