@@ -147,7 +147,7 @@ getAllActiveAlarmEvents: function GetAllActiveAlarmEvents(activeAlarms){
     AlarmEvent.findAll({
         where:{
             Id:{
-                $notIn: sequelize.literal('SELECT AlarmEventId FROM AlarmEventResolution')
+                $notIn: sequelize.literal(`SELECT AlarmEventId FROM AlarmEventResolution`)
             }
         }
     }).then(activeAlarm =>{

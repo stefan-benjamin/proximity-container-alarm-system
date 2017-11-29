@@ -73,6 +73,15 @@ app.get('/', function (req, res) {
    var getAllActiveAlarms = function (activeAlarms) {
       alarmsArray = activeAlarms;
       var itemsProcessed = 0;
+
+      var breakRequired = false;
+
+      if (alarmsArray.length === 0)
+      {
+         res.render('index', { sensorsData: sensorsDataArray, alarms: [] });
+         return;
+      }
+
       alarmsArray.forEach(function (alarmEvent) {
          dblayer.getAlarmById(alarmEvent.AlarmId, function (alarm) {
             var sensorData = JSON.parse(alarmEvent.SensorData);
@@ -84,7 +93,7 @@ app.get('/', function (req, res) {
                res.render('index', { sensorsData: sensorsDataArray, alarms: jsonAlarmsArray });
             }
          });
-      })
+      });
    };
 
    var getAllIds = function (IdList) {
@@ -114,7 +123,7 @@ app.put('/api/sensorStatus', function (req, res) {
    console.log("Received sensor status from: " + sensorId + " with sensor data: " + JSON.stringify(sensorData) + ", status code: " + statusCode);
 
    var getAlarmIdAndSaveEvent = function (alarm) {
-      
+
       var currentTimeStamp = new Date().toLocaleString();
       var saveAlarmEvent = alarmEvent.build({
          AlarmId: alarm.Id,
@@ -123,14 +132,37 @@ app.put('/api/sensorStatus', function (req, res) {
          SensorData: JSON.stringify(sensorData)
       });
 
-      //check if it's active already and in the callback - call the next line
       dblayer.saveAlarmEvent(saveAlarmEvent);
-   }
+   };
 
+   var getAllActiveAlarms = function (activeAlarms) {
+      if (activeAlarms.length === 0)
+      {
+         dblayer.getAlarmByStatusCode(statusCode, getAlarmIdAndSaveEvent)
+      }
+
+      activeAlarms.forEach(function (value) {
+         if (value.DeviceId !== sensorId) {
+            dblayer.getAlarmByStatusCode(statusCode, getAlarmIdAndSaveEvent)
+         }
+      });
+   };
+
+   var getAllIds = function (IdList) {
+      var actualIdList = [];
+
+      IdList.forEach(function (value) {
+         actualIdList.push(value.Id);
+      });
+
+      dblayer.getAllActiveAlarms(actualIdList, getAllActiveAlarms);
+   };
+   
    //add the alarm to the database if it is an issue - different from the ok status code.
    if (sensorsDataMap.has(sensorId)) {
       if (sensorsDataMap.get(sensorId).statusCode === "1000" && statusCode !== "1000") {
-         dblayer.getAlarmByStatusCode(statusCode, getAlarmIdAndSaveEvent);
+         dblayer.getAllResolvedAlarmsIds(getAllIds);
+         
          var data = { sensorData: sensorData, statusCode: statusCode }
          //alarmsMap.set(sensorId, data);
 
