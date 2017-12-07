@@ -1,15 +1,10 @@
 \chapter{Implementation}
 \label{cha:implementation}
 
-Whereas the previous chapter concerned itself with the overall plan in
-the abstract, this is where the actual experiment in the form of an
-implementation is taking form.  It is not the purpose of the
-implementation to fully realise the design described in the previous
-chapter. It is the exclusive purpose of the implementation (a subset
-of the design) to either validate or refute the hypotheses put forth
-in the introduction. This, and nothing else. If it does less, you have
-posed questions you are not prepared to answer; if it does more, you
-should be coding less or asking additional questions.
+This section describes the actual implementation of the system, how it implements the different functionalities specified in previous sections and how these work together in order to realize the whole system. The different components of the system have been implemented independently with consultation and interface definitions during the development process, hence each component of the system is provided with its own dedicated section describing its implementation. Before the actual implementation is going to be put forward it is important to revisit the problem that the implementation shall cover and that is a "Maritime container IoT based monitoring system" capable of monitoring status and generating alarms for maritime containers while storing the alarms for historical purposes and also providing mobile interface to field technicians in order to monitor and resolve alarms. The complete system can be seen on the architectural diagram:
+
+Whereas the previous chapter concerned itself with the overall plan in the abstract, this is where the actual experiment in the form of an implementation is taking form.  It is not the purpose of the implementation to fully realise the design described in the previous chapter. It is the exclusive purpose of the implementation (a subset of the design) to either validate or refute the hypotheses put forth
+in the introduction. This, and nothing else. If it does less, you have posed questions you are not prepared to answer; if it does more, you should be coding less or asking additional questions.
 
 The primary purpose of this chapter is to clearly communicate what has
 been built, and how it works. This can, \eg include architectural
@@ -27,7 +22,7 @@ parts takes place.  As in the previous chapter, I recommend using
 should be included separately with your report in the form of a
 zip-file or USB-stick.
 
-Overall, the implementation is the computer scientist's equivalent of
+Overall, the implementation is the computer scientist's equivalent of 
 lab equipment carefully arranged into an experimental setup, and just
 as the validity of an experimental investigation will be judged in
 part on the craftsmanship of the setup, so will the quality of your
