@@ -35,7 +35,7 @@ Node.js has been used within the scope of our project to develop the central ser
 Express framework is a minimalistic web framework for Node.js[ref]. It simplifies the development of web applications and web APIs. Express is not only used to develop web applications but is often used to create other frameworks with notable examples of Sails which is an MVC framework for web application development and LoopBack, which is used to develop end to end REST APIs. The way of creating a REST method in express is simple and goes as (example of simple GET method):\newline 
 
 \smallskip
-{\tt app.get('/', (req, res) => res.send('Hello World!'))}
+{\textbf app.get('/', (req, res) => res.send('Hello World!'))}
 \newline
 \smallskip
 
@@ -67,7 +67,7 @@ To (use an) ORM or not to (use an) ORM... This is a question that is often ponde
 Bleno is a Node.js module used to implement BLE peripherals [ref]. Bleno can be used to enable the advertising mode (as used within our project) or to facilitate simple (peripheral to central) data transfers via BLE (BLE technology is described here \autoref{subsec:bluetooth}). Bleno is available in NPM and hence fits perfectly to the Node.js development pipeline. Bleno provides simple way of advertising (broadcasting) data: \newline
 
 \smallskip
-{\tt bleno.startAdvertising(name, serviceUuids[, callback(error)]);}
+{\textbf bleno.startAdvertising(name, serviceUuids[, callback(error)]);}
 \newline
 \smallskip
 
