@@ -1,7 +1,17 @@
 \section {Central server}
 \label {sec:implserver}
 
-This section shows the implementation of the central server component. The component consists of several subcomponents, namely:
+This section shows the implementation of the central server component. This component consists of several cooperating subcomponents, namely:
+\begin{enumerate}
+	\item REST API component
+	\item Websocket component
+	\item Web application hosting component
+	\item Database layer component following the repository layer (partly)
+	\item Database creation scripts
+\end{enumerate}
+
+\smallskip
+The central server application is structured into several javascript (.js) files in order to provide separation of concern. The .js files in the solution (solution is to be understood as collection of files and not neccessarily as MS Visual Studio solution) are:
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../ClassicThesis"
