@@ -1,28 +1,20 @@
 \chapter{Conclusion}
 \label{cha:conclusion}
 
-This, then, is the grand summary of what you have accomplished.  You
-may well imagine that many readers will read
-\autoref{cha:introduction}, and then skip right to
-\autoref{cha:conclusion}, and if, and only if, those two parts are
-interesting, might be tempted to read the rest. A consequence is that
-you should ensure that the reader will gain a good overall
-understanding of what you have done by reading only the conclusion.
-Thus, this is a place to summarise all that has gone before, before
-finally concluding on the results of your experiments and the validity
-of your hypotheses. It is also important to ensure that
-\autoref{cha:introduction} (which in all likelihood was written first)
-still aligns closely with the work done and the conclusions reached.
+This report presented the design and implementation of a maritime container monitoring system. The system consists of 3 main components:
+\begin{itemize}
+\item Central monitoring system
+\item Raspberry Pi 3 sensor nodes
+\item Technician hand held terminal
+\end{itemize}
 
-Apart from reporting on your results, \ie your product, this is also a
-good place to reflect on your process, and to discuss the wider
-consequences or ramifications of your work.
+These components were integrated in order to address the issue of monitoring the state of the containers not only by displaying information in a centralized manner but also during the visual inspection process performed regularly by the technicians.
 
-If you so desire, this is also where you might add a section on Future
-Work, where you point in the directions that should be followed to
-complete the work you have already accomplished. This should, however,
-probably be the very last thing on your to-do list.
+While the prototype works as a proof of concept for the system and the technologies used, further development is required in order to achieve a working product. In particular, more sensor information can be retrieved and the central display of status interface can be improved.
 
+When it comes to the technologies, we were able to demonstrate that Node js can be used to program a system of this nature but there is place for improvement on the individual libraries we used. For example, we tried to lower the broadcast transmission power of the BLE module on the Raspberry Pi but we were not able to do this using the Bleno library.
+
+Despite the small encountered limitations, the process used for the project was appropriate and the team is satisfied with the result.  
 
 %%% Local Variables:
 %%% mode: latex
