@@ -1,7 +1,7 @@
 \chapter{Evaluation}
 \label{cha:evaluation}
 
-To test the correctness of the implementation a number of test were performed during the development of the individual applications and after integrating all the components of the system. In this chapter  tests methodology and results are presented.
+To test the correctness of the implementation a number of tests were performed during the development of the individual applications and after integrating all the components of the system. In this chapter the tests methodology and results are presented.
 
 To test the implementation of the project the following devices were used:
 
@@ -11,12 +11,12 @@ To test the implementation of the project the following devices were used:
 \item 1x Personal Computer
 \end{itemize}
 
-Devices were running previously mentioned software. Test of the system after integrating all the components can be described in the following steps:
+The devices were running previously mentioned software. The test of the system after integrating all the components can be described in the following steps:
 
 \begin{enumerate}
 \item Starting designated applications on all of the devices
 \item Checking that the environment of Raspberry Pi node is equivalent to "OK" status.
-\item Confirming that the status is properly broadcasted via Bluetooth and sent to the server
+\item Confirming that the status is properly broadcast via Bluetooth and sent to the server
 \item Changing the environment of the node:
 	\begin{enumerate}
 	\item Heating up the sensor to the level of alarm status
@@ -26,7 +26,7 @@ Devices were running previously mentioned software. Test of the system after int
 \item Confirming that the alarm is raised by checking:
  \begin{enumerate}
 	\item Alarm event in the database
-	\item Name of the device broadcasted via Bluetooth
+	\item Name of the device broadcast via Bluetooth
 	\item Alarm event displayed in Web Browser
 	\end{enumerate}
 \item Selecting the device with raised alarm from the list in Android application  
@@ -35,7 +35,7 @@ Devices were running previously mentioned software. Test of the system after int
 \item Making sure that the alarm has been resolved by checking the data stored in the database and displayed in the Web Browser
 \end{enumerate}
 
-Tests performed in the way described above revealed some problems, that had to be solved by changing the code and the test had to be repeated. After solving all of the problems and performing the test number of times the expected results were given.
+The tests performed in the way described above revealed some problems, that had to be solved by changing the code and the test had to be repeated. After resolving all of the problems and performing the test number of times the expected results were given.
 
 
 
