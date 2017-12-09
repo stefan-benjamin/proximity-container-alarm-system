@@ -1,141 +1,42 @@
 \chapter{Evaluation}
 \label{cha:evaluation}
 
-Having built the equivalent of a experimental setup, it is time to use
-the implementation to test the hypotheses.
+To test correctness of the implementation a number of test were performed during the development of the individual applications and after integrating all the components of the system. In this chapter  tests methodology and results are presented.
 
-This is usually broken down in stages and subquestions.
+To test the implementation of the project the following devices were used:
 
-A structured approach to performing and reporting on experiments is
-to follow this pattern for every single experiment:
+\begin{itemize}
+\item 1x Rasbpberry pi 3 with DHT22 sensor 
+\item 1x Android device- Samsung Galaxy S7 Edge
+\item 1x Personal Computer
+\end{itemize}
+
+Devices were running previously mentioned software. Test of the system after integrating all the components can be described in the following steps:
 
 \begin{enumerate}
-\item What is the purpose of the experiment?
-\item What is the expected outcome?
-\item What are the parameters under which the experiment takes place?
-\item What are the results?
-\item How do the results align with the expected outcome? If they do not
-  align, why is that so?
+\item Starting designated applications on all of the devices
+\item Checking that the environment of Raspberry Pi node is equivalent to "OK" status.
+\item Confirming that the status is properly broadcasted via Bluetooth and sent to the server
+\item Changing the environment of the node:
+	\begin{enumerate}
+	\item Heating up the sensor to the level of alarm status
+	\item Cooling down the sensor to the level of alarm status
+	\item Disconnecting the sensor from the Raspberry pi
+	\end{enumerate}
+\item Confirming that the alarm is raised by checking:
+ \begin{enumerate}
+	\item Alarm event in the database
+	\item Name of the device broadcasted via Bluetooth
+	\item Alarm event displayed in Web Browser
+	\end{enumerate}
+\item Selecting the device with raised alarm from the list in Android application  
+\item Confirming that the alarm information and resolution displayed in the dialog match the data stored in the database
+\item Resolving the alarm by tapping "Resolve Problem" button in the dialog
+\item Making sure that the alarm has been resolved by checking the data stored in the database and displayed in the Web Browser
 \end{enumerate}
 
-Results should be presented summarised. For quantitative experiments, this
-will usually be in the form of tables and graphs.  Remember to note the
-number of times experiments were repeated, as well as averages, and standard
-deviations (in percent of the mean).  There is much more to the proper
-evaluation of experimental data than can be expounded upon here, but I turn
-the reader's attention to \citep{Downey2011:TSPASFP2011}, which is freely
-available.
+Tests performed in the way described above revealed some problems, that had to be solved by changing the code and the test had to be repeated. After solving all of the problems and performing the test number of times the expected results were given.
 
-If your results are of a qualitative nature, the summaries will depend on
-the type of investigation you have done. It can be carefully annotated
-recordings of specific incidents of the system in use; analysis with quotes
-from interviews; or results from questionnaires and other investigations.
-Whole transcripts belong in an appendix, but excerpts are fine in the main
-text.
-
-
-
-\begin{figure}
-  \myfloatalign
-  \begin{tikzpicture}
-    \begin{axis} [xlabel=$x$, ylabel=$\bar{y}$]
-      \addplot[
-      sharp plot,
-      error bars,
-      y dir=both,
-      y explicit,
-      error bar style={red}
-      ] table[
-      x=x,
-      y=avgy,
-      y error=stddevp]{./data/example.csv};
-    \end{axis}
-  \end{tikzpicture}
-  \caption{A graph with error bars}
-  \label{fig:pretty-graph}
-\end{figure}
-
-
-
-\begin{table}
-  \myfloatalign
-  \pgfplotstabletypeset[
-  every head row/.style={
-    before row=\toprule,
-    after row=\midrule,
-  },
-  every even row/.style={
-    before row={\rowcolor[gray]{0.95}}},
-  every last row/.style={
-    after row=\bottomrule
-  },
-  columns={x, avgy, stddevpp},
-  columns/x/.style={
-    column name=x,
-    dec sep align,
-    fixed,
-    fixed zerofill,
-    precision=2
-  },
-  columns/avgy/.style={
-    column name=$\bar{y}$,
-    dec sep align,
-    fixed,
-    fixed zerofill,
-    precision=2
-  },
-  columns/stddevpp/.style={
-    column name=$\sigma\%$,
-    dec sep align,
-    fixed,
-    fixed zerofill,
-    precision=1
-  },
-  ]{./data/example.csv}
-  % \tableheadline{labitur bonorum pri no} & \tableheadline{que vista}
-  % & \tableheadline{human} \\ \midrule
-  \caption{An auto-generated table} \label{tab:pretty-table}
-\end{table}
-
-
-
-\section{Some Notes on Tables, Graphs, and Figures}
-\label{sec:some-notes-tables}
-
-It is paramount that you clearly and concisely present your results, and
-that usually entails documentation in the form of tables or figures.  Such
-things are more informative if they are clearly formatted and legible.
-
-There are many tools with which you can plot graphs of your data. I would
-suggest that you use something that can be scripted, so you can tweak your
-parameters, run the evaluation, and see the fresh results, again and
-again. Having to, \eg copy and paste or import data into an application will
-slow you down, and might well lead to confusion---is this the new data or
-not? A small investment upfront in scripting everything will lead to
-savings in both time and frustration later on.
-
-If you are fluent in Python,
-Matplotlib\footnote{\url{http://matplotlib.org/}} is very good, and can be
-used interactively in
-Jupyter\footnote{\url{http://jupyter.org/}}. Gnuplot\footnote{\url{http://gnuplot.info/}}
-is another powerful choice, and probably easier to get started with. If you
-know R\footnote{\url{https://www.r-project.org/}},
-ggplot2\footnote{\url{http://ggplot2.org/}} is the obvious route.  For
-web-based systems, D3.js\footnote{\url{http://d3jsp.org/}} is quite popular.
-
-As long as your tool of choice can generate PDFs, you should be golden.
-
-If you output your data to comma or tab separated files, you can even
-generate your plots and tables directly in \LaTeX\ using
-\textsc{Pgfplots}\footnote{\url{http://pgfplots.sourceforge.net/}}
-   (further
-   examples\footnote{\url{http://pgfplots.net/tikz/examples/all/}}--\autoref{fig:pretty-graph}
-   was generated using \textsc{Pgfplots}) and
-\textsc{PgfplotsTable}\footnote{\url{http://pgfplots.sourceforge.net/pgfplotstable.pdf}}.
-Doing this can quickly save you time, as especially \LaTeX\ tables, while
-pretty, are tedious and error prone to edit. See
-\autoref{tab:pretty-table} for an auto-generated example. For more help on
-tables, see the \LaTeX\ wiki books\footnote{\url{https://en.wikibooks.org/wiki/LaTeX/Tables}}.
 
 
 %%% Local Variables:
