@@ -32,7 +32,6 @@
                 BCOR=5mm,paper=a4,fontsize=11pt,%11pt,a4paper,%
                 ngerman,american,%
                 ]{scrreprt}
-
 %********************************************************************
 % Note: Make all your adjustments in here
 %*******************************************************
@@ -65,21 +64,16 @@
 % Frontmatter
 %*******************************************************
 \include{FrontBackmatter/DirtyTitlepage}
-%\include{FrontBackmatter/Titlepage}
-%\include{FrontBackmatter/Titleback}
-%\cleardoublepage\include{FrontBackmatter/Dedication}
-%\cleardoublepage\include{FrontBackmatter/Abstract}
-%\cleardoublepage\include{FrontBackmatter/Publications}
-%\cleardoublepage\include{FrontBackmatter/Acknowledgments}
-%\pagestyle{scrheadings}
+\let\cleardoublepage\clearpage
 \include{FrontBackmatter/Contents}
 %********************************************************************
 % Mainmatter
 %*******************************************************
-\clearpage\pagenumbering{arabic}
+%\clearpage
+\pagenumbering{arabic}
 %\setcounter{page}{90}
 % use \cleardoublepage here to avoid problems with pdfbookmark
-\clearpage
+%\clearpage
 % What should a thesis contain:
 
 %\ctparttext{The following reflects what I believe to be a good structure
@@ -90,7 +84,7 @@
 
 %\part{The Proper Structure of a Thesis}
 %\label{part:prop-struct-thes}
-\cleardoublepage
+%\clearpage
 
 %\cleardoublepage\input{Chapters/Foreword}
 %\input{Chapters/Foreword}
@@ -121,13 +115,13 @@
 %*******************************************************
 \appendix
 %\renewcommand{\thechapter}{\alph{chapter}}
-\cleardoublepage
-\part{Appendix}
+%\cleardoublepage
+%\part{Appendix}
 %\include{Chapters/ChapterM0A}
 %********************************************************************
 % Other Stuff in the Back
 %*******************************************************
-\cleardoublepage\include{FrontBackmatter/Bibliography}
+\include{FrontBackmatter/Bibliography}
 %\cleardoublepage\include{FrontBackmatter/Declaration}
 %\cleardoublepage\include{FrontBackmatter/Colophon}
 % ********************************************************************
