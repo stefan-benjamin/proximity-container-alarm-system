@@ -5,8 +5,11 @@
 The Container monitoring system is designed as a Web of Things system using different communication paradigms. The System consists of several components, namely container sensor node, technician hand terminal and a central server. All of these components work together in order to inform the technician in the field as well as the surveilance personess about potential issues with shipping containers during transport. The communication links between different are clearly defined as REST, Bluetooth Low Energy advertising mode and WebSocket. The high level overview of the system is as follows:
 
 \bigskip
-\includegraphics[scale=0.5]{gfx/overview}
-\bigskip
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{gfx/overview} 
+\caption{System overview}~\label{fig:overview}
+\end{figure}
 
 The system can remain functional even without the central server in place, however alarm information is then not availble beyond simple alarm identifier. Here each individual component will be described as well as communication processes between the components.
 
@@ -55,9 +58,11 @@ The device also transmits its unique (within the ship) Identifier in order to pi
 
 The hand terminal is a device that enables the technician to recieve and review alarms from containers as the technician comes to the proximity of the container raising the alarm. The hand terminal listens to the Bluetooth Low Energy broadcasts and shows potential alarm broadcasts on the screen. The alarm closest to the device is to be presented as the most pressing in order to lead the technician to handle the closest containers first. The device gets the alarm identifier from the sensor node, and the alarm description and possible resolution from the central server. The technician can decide to resolve the alarm on device which in turn must inform the central server about the resolution of the alarm (in order for all monitoring parties to know that the alarm has been resolved). The communication between the hand terminal and the central server uses REST. The hand terminal is designed as an Android application so it is usable on Android devices equipped with BLE chips. The hand terminal device defines several use cases for the technician:
 
-\smallskip
+\begin{figure}[H]
+\centering
 \includegraphics[scale=0.6]{gfx/handterminal}
-\smallskip
+\caption{Hand terminal use case diagram}~\label{fig:handterminal}
+\end{figure}
 
 The hand terminal computation and communication flow for alarm receiving and alarm resolution is as follows. Please note that all of the components of the system are involved:
 \begin{figure}[!h]
@@ -103,9 +108,13 @@ The Central Server is a component within the system that the surveillance person
 
 These communication principles can be simply visualized as:
 
-\smallskip
+
+\begin{figure}[H]
+\centering
 \includegraphics[scale=0.6]{gfx/servercomm}
-\smallskip
+\caption{System communication overview}~\label{fig:servercomm}
+\end{figure}
+
 
 The important part of the central server components is its data storage services as well. These are handled as follows:
 \begin{figure}[!h]

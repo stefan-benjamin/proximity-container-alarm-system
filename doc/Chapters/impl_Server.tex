@@ -47,8 +47,10 @@ The file specifies database operations used by the application. Unlike the repos
 \bigskip
 \textbf{The files follow the following structure:}
 \smallskip
+
 \begin{figure}[H]
 \includegraphics[scale=0.6]{gfx/structure}
+\caption{Server implemenatation project structure}~\label{fig:structure}
 \end{figure}
 \smallskip
 
@@ -57,6 +59,7 @@ The overall structure can be seen on a following class diagram (please note that
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.3]{gfx/class}
+\caption{Server implemenatation class diagram}~\label{fig:serverClass}
 \end{figure}
 \smallskip
 As a short explanation to the class diagram above it is important to point out that the index.js file is picked up by sequelize at execution and hence it is not imported within any of the other files explicitely.

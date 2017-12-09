@@ -3,11 +3,15 @@
 
 This section describes the actual implementation of the system, how it implements the different functionalities specified in previous sections and how these work together in order to realize the whole system. The different components of the system have been implemented independently with consultation among implementers and interface definitions during the development process, hence each component of the system is provided with its own dedicated section describing its implementation. Before the actual implementation is going to be put forward it is important to revisit the problem that the implementation shall cover and that is a "Maritime container IoT based monitoring system" capable of monitoring status and generating alarms for maritime containers while storing the alarms for historical purposes and also providing mobile interface to field technicians in order to monitor and resolve alarms. The complete system (including components and sub components) and its various interactions can be visualized on the high level architectural diagram:
 
-\bigskip
-\includegraphics[scale=0.5]{gfx/Architecture}
-\smallskip
 
-\include{Chapters/impl_Server}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.47]{gfx/Architecture}
+\caption{System architecture}~\label{fig:servercomm}
+\end{figure}
+
+
+\include{Chapters/Impl_Server}
 \include{Chapters/Impl_BLENode}
 \include{Chapters/Impl_Android}
 

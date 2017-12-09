@@ -2,7 +2,7 @@
 \label{cha:related-work}
 
 
-This chapter defines the previous work related to the project and defines and describes the technologies and frameworks used within the project. While the project is built based on the technologies discussed within the scope of the course, the inspiration has been found while reviewing literature on applications of IoT technology specifically \citep{7396510}. This has shown that simple BLE Beacons and mobile application can be used within building automation environment. Further experiments have been made in order to determine potential of wireless sensor networks and bluetooth technology to monitor refridgerated containers during transport \citep{SJAR234} and have concluded that while the technology is available, it is primarily the lack of standardization of technologies within IoT enironments and transport systems (where CAN Bus is prevalent) that slows down adoption of WSN technology for monitoring of containers. Due to the lack of standardization several competing radio technologies in the arena of wireless sensor networks have been discussed as well such as 802.15.4 and its usage within (among others) Zigbee technology. Bluetooth low energy has however advantage in its integration to most of the modern smartphones and the growth potential of the technology \citep{statista}. Its ready availability was a determining factor in choosing the technology for status broadcasting within this project. It is also expectable that the application will focus on more advanced use cases due to possibility of creation of a 6LoWPAN \citep{RFC7668} \citep{article} network over BLE system. 
+This chapter defines the previous work related to the project and defines and describes the technologies and frameworks used within the project. While the project is built based on the technologies discussed within the scope of the course, the inspiration has been found while reviewing literature on applications of IoT technology specifically \cite{7396510}. This has shown that simple BLE Beacons and mobile application can be used within building automation environment. Further experiments have been made in order to determine potential of wireless sensor networks and bluetooth technology to monitor refridgerated containers during transport \citep{SJAR234} and have concluded that while the technology is available, it is primarily the lack of standardization of technologies within IoT enironments and transport systems (where CAN Bus is prevalent) that slows down adoption of WSN technology for monitoring of containers. Due to the lack of standardization several competing radio technologies in the arena of wireless sensor networks have been discussed as well such as 802.15.4 and its usage within (among others) Zigbee technology. Bluetooth low energy has however advantage in its integration to most of the modern smartphones and the growth potential of the technology \citep{statista}. Its ready availability was a determining factor in choosing the technology for status broadcasting within this project. It is also expectable that the application will focus on more advanced use cases due to possibility of creation of a 6LoWPAN \citep{RFC7668} \citep{article} network over BLE system. 
 
 \bigskip
 
@@ -24,8 +24,11 @@ As many IoT based environments, the container monitoring system is comprised of 
 Often know as the javascript for the server side it is javascript runtime built on the Chrome's V8 javascript engine. The development in Node.js typically confirms with principles of event driven applications with non blocking I/O \citep{nodejs}. Primary purpose of Node.js is to provide environment for building of scalable network applications. This is done by usage of asynchronous processing, where connections to the server fire a callback that further handles the processing of the request and provides a reply to the client. Very common usage of Node.js is in development of REST based web APIs (more about REST is here \autoref{subsec:rest}).
 
 \bigskip
+\begin{figure}[H]
+\centering
 \includegraphics[scale=0.3]{gfx/node} 
-\bigskip
+\caption{Node.js}~\label{fig:node}
+\end{figure}
 
 Node.js has been used within the scope of our project to develop the central server and the client on Raspberry PI(what we consider a BLE beacon device). Node.js consists of multitude of frameworks and we have primarily used Express framework for web application development and Sequelize ORM for database connectivity. The package manager used was the Node.js native package manager npm \citep{npm}, which is one of the most widely used package managers within javascript development.
 
@@ -84,9 +87,11 @@ Bluetooth Low Energy is the technology introduced by the Bluetooth Special Inter
 
 In order to stay within the energy consumption envelope this of course has limitations. The advertising mode can at maximum transport 31 Bytes of data payload. Advertisement mode broadcast the data and any Bluetooth Low Energy device in the vicinity can pick up the data payload advertised. The package structure of the BLE Advertisement package:
 
-\bigskip
-\includegraphics[scale=0.4]{gfx/blepacket} 
-\bigskip  
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.4]{gfx/blepacket}
+\caption{BLE package structure}~\label{fig:blepacket}
+\end{figure}
 
 \subsection{SQLite}
 \label{subsec:sqlite}
@@ -96,9 +101,11 @@ SQLite is a library providing a serverless, transctional and self contained SQL 
 \label{subsec:rest}
 Representational state transfer (REST) provides a way of communicating between devices using Web resources. The base for the communication is HTTP protocol (but not only, COAP would be a nice example of a REST protocol for constrained devices) which implements methods that describe the action (GET, POST, PUT, DELETE, etc.) to be udertaken on the particular web resource. The data can be exchanged between these endpoints in variety of forms (JSON, XML, HTML, etc.). The course book \citep{Guinard:2016:BWT:3055920} has a definition of REST that was considered within this project. The statelessness of the RESTful communication as well as unique identification of resources by usage of URIs is what makes it a good fit for data exchange within the Web of Things. REST is currently a popular way of defining Web APIs and many programming languages provide (at least one) framework specifically oriented at creation of REST Web APIs. The example REST call looks as follows:
 
-\bigskip
+\begin{figure}[H]
+\centering
 \includegraphics[scale=0.5]{gfx/REST} 
-\bigskip
+\caption{REST call flow diagram}~\label{fig:REST}
+\end{figure}
 
 \subsection{WebSocket}
 \label{subsec:websocket}
