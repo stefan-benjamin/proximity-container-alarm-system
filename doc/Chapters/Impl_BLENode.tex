@@ -5,17 +5,25 @@ The sensing node is supposed to be installed on the container. For the demonstra
 
 The BLE node has a DHT22 sensor that is able to sense temperature and humidity. The following diagram shows the wiring setup between the Raspberry device and the sensor. The sensor has 3 pin connections - 2 of them being used for power (VCC and ground) while the third is for transferring data. The compatible driver for this sensor is required to be installed on the node.
 
-\bigskip
+
+\begin{figure}[H]
+\centering
 \includegraphics[scale=0.7]{gfx/RaspberrySensorNode} 
-\bigskip
+\caption{Raspberry Pi and DHT22 connection setup}~\label{fig:RaspberrySensorNode}
+\end{figure}
+
 
 To interface with the sensor from the Node application, a npm package called node-dht-sensor needed to be added to the project.
 
 The Node application for the BLE node is structured as shown in the following diagram. For each of the components, the most important public methods are shown in order to show the interfacing between them. Private methods and members are not included to maintain the simplicity of the diagram.
 
-\bigskip
-\includegraphics[scale=0.6]{gfx/bleNode_architecture} 
-\bigskip
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{gfx/bleNode_architecture}  
+\caption{BLE node class diagram}~\label{fig:bleNode_architecture}
+\end{figure}
+
 
 For each file, a short description of its purpose is provided.
 \begin{itemize}
